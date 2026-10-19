@@ -2,7 +2,7 @@
 
 A flight operations management system for a military helicopter unit: it runs a sortie from aircraft serviceability to debrief, enforces every approval gate, and works on phones in the field even with no signal.
 
-It runs as a website, installs on Android and iPhone as an app (with phone notifications), and ships with a native store-app shell for Google Play and the App Store.
+It runs as a website, installs on Android (with phone notifications), and ships with a native store-app shell for Google Play and the App Store.
 
 > This public copy uses a fictional unit ("Demo Helicopter Squadron") and a generic logo. Each unit that adopts the system sets its own name, home aerodrome, logo and watermark in **Settings**.
 
