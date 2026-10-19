@@ -8,6 +8,7 @@ import { permissionsFor, rolesFor } from '../src/lib/rbac';
 import { formatHours, parseHours } from '../src/lib/hours';
 import { blankForm, composeMetar } from '../src/lib/weather/compose';
 import { describeConditions } from '../src/lib/weather/plain';
+import { entryProblem, expiresAt, isExpired } from '../src/lib/weather/validity';
 
 const ip: CrewMember = { userId: 'ip', seat: 'INSTRUCTOR', flightStatus: 'CAPTAIN', pilotCategory: 'INSTRUCTOR' };
 const tp: CrewMember = { userId: 'tp', seat: 'TRAINEE', flightStatus: 'CO_PILOT', pilotCategory: 'TRAINEE' };
@@ -133,5 +134,21 @@ describe('weather', () => {
     const p = parseWeather(code, 'METAR');
     expect(p.ceilingFt).toBe(3000);
     expect(describeConditions(p)).toContain('Light showers of rain');
+  });
+});
+
+describe('weather validity', () => {
+  it('expires a METAR one hour after observation and refuses old ones', () => {
+    const obs = new Date('2026-10-19T14:00:00Z');
+    expect(expiresAt({ kind: 'METAR', observedAt: obs, validTo: null, createdAt: obs }).toISOString()).toBe('2026-10-19T15:00:00.000Z');
+    expect(isExpired({ kind: 'METAR', observedAt: obs, validTo: null, createdAt: obs }, new Date('2026-10-19T15:01:00Z'))).toBe(true);
+    expect(entryProblem({ kind: 'METAR', observedAt: obs, validFrom: null, validTo: null }, new Date('2026-10-19T15:30:00Z'))).toContain('expired');
+    expect(entryProblem({ kind: 'METAR', observedAt: obs, validFrom: null, validTo: null }, new Date('2026-10-19T14:20:00Z'))).toBe(null);
+  });
+  it('uses the TAF validity period, at most 30 hours', () => {
+    const from = new Date('2026-10-19T12:00:00Z');
+    expect(entryProblem({ kind: 'TAF', observedAt: from, validFrom: from, validTo: new Date('2026-10-20T18:00:00Z') }, from)).toBe(null);
+    expect(entryProblem({ kind: 'TAF', observedAt: from, validFrom: from, validTo: new Date('2026-10-20T20:00:00Z') }, from)).toContain('30 hours');
+    expect(isExpired({ kind: 'TAF', observedAt: from, validTo: new Date('2026-10-20T18:00:00Z'), createdAt: from }, new Date('2026-10-20T18:00:00Z'))).toBe(true);
   });
 });

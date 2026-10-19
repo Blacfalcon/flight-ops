@@ -2,6 +2,8 @@ import type { WeatherReport } from '@prisma/client';
 import { localTime, zuluTime } from '@/lib/time';
 import { parseWeather } from '@/lib/weather/metar';
 import { describeChangeGroups, describeConditions } from '@/lib/weather/plain';
+import { expiresAt } from '@/lib/weather/validity';
+import { WeatherValidity } from './weather-validity';
 
 type Cloud = { cover: string; baseFt: number | null; type?: string };
 
@@ -71,5 +73,15 @@ export function PlainWeather({ report, compact = false }: { report: Pick<Weather
         </>
       )}
     </div>
+  );
+}
+
+/** Wraps a METAR or TAF with its validity: a live countdown, and the report greyed out once expired. */
+export function ValidReport({ report, children }: { report: Pick<WeatherReport, 'kind' | 'observedAt' | 'validFrom' | 'validTo' | 'createdAt'> | null; children: React.ReactNode }) {
+  if (!report) return <>{children}</>;
+  return (
+    <WeatherValidity kind={report.kind as 'METAR' | 'TAF'} expiresAt={expiresAt(report).toISOString()}>
+      {children}
+    </WeatherValidity>
   );
 }

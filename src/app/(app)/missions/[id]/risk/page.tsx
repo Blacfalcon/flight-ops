@@ -66,12 +66,17 @@ export default async function MissionRiskPage({ params }: { params: Promise<{ id
   return (
     <>
       {header}
+      {!weather.current && (
+        <div className="alert-bad">
+          {weather.note}. You can fill in the form, but it can’t be submitted until a current METAR is entered.
+        </div>
+      )}
       {latest?.status === 'REJECTED' && <div className="alert-bad">The previous version was rejected. Review the approvers’ remarks on the mission page, then resubmit.</div>}
       <RiskForm
         missionId={m.id}
         missionNo={m.missionNo}
         thresholds={settings.riskThresholds}
-        weather={{ rating: weather.rating, note: weather.note, metar: weather.metarRaw }}
+        weather={{ rating: weather.rating, note: weather.note, metar: weather.metarRaw, current: weather.current }}
         crewCount={m.crew.length}
       />
     </>

@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { invalid, route } from '@/lib/api';
 import { weatherSchema } from '@/lib/validators';
 import { parseWeather } from '@/lib/weather/metar';
+import { entryProblem } from '@/lib/weather/validity';
 import { getSettings } from '@/lib/settings';
 import { nameOnly } from '@/lib/selects';
 import { audit } from '@/lib/audit';
@@ -19,7 +20,8 @@ export const POST = route({ perm: 'weather.update', schema: weatherSchema }, asy
   const parsed = parseWeather(body.raw, body.kind);
   const settings = await getSettings();
   if (!parsed.station) throw invalid('The report should start with the station code, for example DNAA.', { raw: 'Station code missing.' });
-  if (body.kind === 'METAR' && !parsed.observedAt) throw invalid('The METAR needs its observation time, for example 151900Z.', { raw: 'Time group missing.' });
+  const problem = entryProblem({ kind: body.kind, observedAt: parsed.observedAt, validFrom: parsed.validFrom, validTo: parsed.validTo });
+  if (problem) throw invalid(problem, { raw: problem });
   const w = await db.weatherReport.create({
     data: {
       kind: body.kind,

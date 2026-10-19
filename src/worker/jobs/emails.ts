@@ -27,6 +27,7 @@ export const URGENT_KINDS = new Set([
   'flightPlan.submitted',
   'user.awaitingActivation',
   'delegation.set',
+  'weather.expired',
 ]);
 
 const DIGEST_MINUTES = 60;

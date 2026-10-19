@@ -2,6 +2,7 @@ import PgBoss from 'pg-boss';
 import { missionClock } from './jobs/mission-clock';
 import { sendPendingEmails } from './jobs/emails';
 import { sendPendingPushes } from './jobs/push';
+import { weatherExpiry } from './jobs/weather';
 import { housekeeping, inspectionCheck } from './jobs/maintenance';
 import { summariesDue } from './jobs/summaries';
 import { db } from '../lib/db';
@@ -15,6 +16,7 @@ const jobs: Array<{ name: string; cron: string; run: () => Promise<void> }> = [
   { name: 'mission-clock', cron: '* * * * *', run: () => missionClock() },
   { name: 'send-emails', cron: '* * * * *', run: () => sendPendingEmails() },
   { name: 'send-push', cron: '* * * * *', run: () => sendPendingPushes() },
+  { name: 'weather-expiry', cron: '* * * * *', run: () => weatherExpiry() },
   { name: 'summaries', cron: '*/5 * * * *', run: () => summariesDue() },
   { name: 'inspection-check', cron: '0 6 * * *', run: () => inspectionCheck() },
   { name: 'housekeeping', cron: '30 3 * * *', run: () => housekeeping() },

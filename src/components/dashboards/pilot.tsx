@@ -3,7 +3,7 @@ import { Card, Empty, MissionStatusPill, ReadinessPill } from '../ui';
 import { missionTypeLabel, SEAT_LABEL, type SeatValue } from '@/lib/constants';
 import { countdown, formatShortDate, hm, localDate, localTime } from '@/lib/time';
 import { ReadinessButtons } from '../mission/readiness-buttons';
-import { PlainWeather } from '../weather-panel';
+import { PlainWeather, ValidReport } from '../weather-panel';
 
 export async function PilotDashboard({ userId, name, compact = false }: { userId: string; name: string; compact?: boolean }) {
   const d = await pilotDashboard(userId);
@@ -49,7 +49,9 @@ export async function PilotDashboard({ userId, name, compact = false }: { userId
 
       {d.metar && (
         <section aria-label="Weather" className="flex flex-col gap-2">
-          <PlainWeather report={d.metar} compact />
+          <ValidReport report={d.metar}>
+            <PlainWeather report={d.metar} compact />
+          </ValidReport>
           <a href="/weather" className="self-start text-[13px] font-semibold">
             Full weather and TAF
           </a>

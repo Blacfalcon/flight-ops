@@ -7,6 +7,7 @@ import { getSettings } from '../settings';
 import { computeRisk, validRatings, weatherRatingFrom, type Imsafe, type Ratings } from '../rules/risk';
 import { pilotInCommandSeat } from '../rules/pairing';
 import { localTime } from '../time';
+import { expiresAt, isExpired } from '../weather/validity';
 
 type Tx = Prisma.TransactionClient;
 
@@ -28,8 +29,21 @@ export async function weatherSuggestion(takeoffAt: Date) {
     getSettings(),
     db.weatherReport.findFirst({ where: { kind: 'METAR' }, orderBy: { createdAt: 'desc' } }),
   ]);
-  const s = weatherRatingFrom(metar ? { visibilityM: metar.visibilityM, ceilingFt: metar.ceilingFt } : null, settings.vmcMinima, isNight(takeoffAt));
-  return { ...s, metarRaw: metar?.rawText ?? null, observedAt: metar?.observedAt ?? null };
+  // An expired METAR is never used: the crew is told to get a current one
+  const current = metar && !isExpired(metar) ? metar : null;
+  const s = weatherRatingFrom(current ? { visibilityM: current.visibilityM, ceilingFt: current.ceilingFt } : null, settings.vmcMinima, isNight(takeoffAt));
+  const expiredAt = metar && !current ? expiresAt(metar) : null;
+  return {
+    ...s,
+    note: current
+      ? s.note
+      : expiredAt
+        ? `The latest METAR expired at ${expiredAt.toISOString().slice(11, 16)}Z. Ask the Operations Officer for a current one`
+        : 'No METAR has been entered. Ask the Operations Officer for one',
+    current: !!current,
+    metarRaw: current?.rawText ?? null,
+    observedAt: current?.observedAt ?? null,
+  };
 }
 
 async function approverIds(tx: Tx, roles: ApproverRole[]): Promise<string[]> {
@@ -56,6 +70,7 @@ export async function submitRisk(args: {
   if (mission.status !== 'CREW_READY') throw conflict('The whole crew must confirm READY before the risk assessment is submitted.');
 
   const suggestion = await weatherSuggestion(mission.takeoffAt);
+  if (!suggestion.current) throw conflict(`${suggestion.note}. A risk assessment needs a current METAR.`);
   if (args.ratings.weather < suggestion.rating && !args.weatherLoweredReason?.trim()) {
     throw invalid('Give a reason for rating the weather lower than the METAR suggests.', { weatherLoweredReason: `METAR suggests ${suggestion.rating}.` });
   }

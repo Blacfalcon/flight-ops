@@ -1,7 +1,7 @@
 import { opsDashboard } from '@/lib/dashboards';
 import { MissionTable } from '../mission-table';
 import { Card, Empty, ReadinessPill } from '../ui';
-import { PlainWeather, RawReport, WeatherTiles } from '../weather-panel';
+import { PlainWeather, RawReport, ValidReport, WeatherTiles } from '../weather-panel';
 import { Avatar } from '../avatar';
 import { SEAT_LABEL, personName, type SeatValue } from '@/lib/constants';
 import { formatLongDate, hm, localTime } from '@/lib/time';
@@ -49,10 +49,16 @@ export async function OpsDashboard({ canWeather }: { canWeather: boolean }) {
         </Card>
         <Card className="min-w-0 flex-[1_1_320px]" title={`Weather · ${d.metar?.station ?? '—'}`} actions={canWeather ? <a href="/weather" className="btn-outline btn-sm">Update METAR / TAF</a> : undefined}>
           <div className="flex flex-col gap-4">
-            <WeatherTiles metar={d.metar} />
-            <PlainWeather report={d.metar} compact />
-            <RawReport label="METAR" text={d.metar?.rawText} />
-            <RawReport label="TAF" text={d.taf?.rawText} />
+            <ValidReport report={d.metar}>
+              <div className="flex flex-col gap-4">
+                <WeatherTiles metar={d.metar} />
+                <PlainWeather report={d.metar} compact />
+                <RawReport label="METAR" text={d.metar?.rawText} />
+              </div>
+            </ValidReport>
+            <ValidReport report={d.taf}>
+              <RawReport label="TAF" text={d.taf?.rawText} />
+            </ValidReport>
           </div>
         </Card>
       </div>

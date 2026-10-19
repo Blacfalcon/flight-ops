@@ -24,7 +24,7 @@ export function RiskForm({
   missionId: string;
   missionNo: string;
   thresholds: Thresholds;
-  weather: { rating: number; note: string; metar: string | null };
+  weather: { rating: number; note: string; metar: string | null; current: boolean };
   crewCount: number;
 }) {
   const s = useSubmit();
@@ -109,7 +109,7 @@ export function RiskForm({
               </div>
               <div className="text-[13px] text-ink-muted">
                 1 = {c.low.toLowerCase()} · 5 = {c.high.toLowerCase()}
-                {c.key === 'weather' && <span className="block">Suggested {weather.rating} from METAR: {weather.note}.</span>}
+                {c.key === 'weather' && (weather.current ? <span className="block">Suggested {weather.rating} from METAR: {weather.note}.</span> : <span className="block font-semibold text-bad-fg">{weather.note}.</span>)}
               </div>
               {c.key === 'weather' && weatherLowered && (
                 <div>
@@ -147,7 +147,7 @@ export function RiskForm({
 
       <button
         className="btn-primary h-14 text-[17px]"
-        disabled={!complete || s.busy || (result?.mitigationRequired && !mitigations.trim()) || (weatherLowered && !lowerReason.trim())}
+        disabled={!weather.current || !complete || s.busy || (result?.mitigationRequired && !mitigations.trim()) || (weatherLowered && !lowerReason.trim())}
         onClick={submit}
       >
         {s.busy ? 'Submitting…' : 'Submit for approval'}

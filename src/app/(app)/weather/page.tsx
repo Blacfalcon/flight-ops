@@ -4,7 +4,8 @@ import { nameOnly } from '@/lib/selects';
 import { personName } from '@/lib/constants';
 import { formatDateTime } from '@/lib/time';
 import { Card, PageHeader } from '@/components/ui';
-import { PlainWeather, RawReport, WeatherTiles } from '@/components/weather-panel';
+import { PlainWeather, RawReport, ValidReport, WeatherTiles } from '@/components/weather-panel';
+import { expiresAt, isExpired } from '@/lib/weather/validity';
 import { WeatherEntry } from '@/components/weather-entry';
 import { getSettings } from '@/lib/settings';
 
@@ -24,11 +25,19 @@ export default async function WeatherPage() {
       <div className="flex flex-wrap items-start gap-6">
         <Card className="min-w-0 flex-[1_1_380px]" title="Current conditions">
           <div className="flex flex-col gap-4">
-            <WeatherTiles metar={metar} />
-            <PlainWeather report={metar} />
-            <RawReport label="METAR" text={metar?.rawText} />
-            <PlainWeather report={taf} />
-            <RawReport label="TAF" text={taf?.rawText} />
+            <ValidReport report={metar}>
+              <div className="flex flex-col gap-4">
+                <WeatherTiles metar={metar} />
+                <PlainWeather report={metar} />
+                <RawReport label="METAR" text={metar?.rawText} />
+              </div>
+            </ValidReport>
+            <ValidReport report={taf}>
+              <div className="flex flex-col gap-4">
+                <PlainWeather report={taf} />
+                <RawReport label="TAF" text={taf?.rawText} />
+              </div>
+            </ValidReport>
           </div>
         </Card>
         {auth.perms.has('weather.update') && (
@@ -44,6 +53,7 @@ export default async function WeatherPage() {
               <tr>
                 <th>Entered</th>
                 <th>Kind</th>
+                <th>Validity</th>
                 <th>Report</th>
               </tr>
             </thead>
@@ -52,6 +62,9 @@ export default async function WeatherPage() {
                 <tr key={h.id}>
                   <td className="whitespace-nowrap">{formatDateTime(h.createdAt)}</td>
                   <td>{h.kind}</td>
+                  <td className="whitespace-nowrap">
+                    {isExpired(h) ? <span className="pill-none">Expired {formatDateTime(expiresAt(h))}</span> : <span className="pill-good">Until {formatDateTime(expiresAt(h))}</span>}
+                  </td>
                   <td className="font-mono text-[12px]">{h.rawText}</td>
                 </tr>
               ))}
