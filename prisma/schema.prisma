@@ -1,0 +1,809 @@
+// Flight Operations Management System — database schema
+// All timestamps are stored in UTC. Display converts to WAT (Africa/Lagos) with Zulu alongside.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────────── Enums ─────────────────────────────
+
+enum Rank {
+  PILOT_OFFICER
+  FLYING_OFFICER
+  FLIGHT_LIEUTENANT
+  SQUADRON_LEADER
+  WING_COMMANDER
+  GROUP_CAPTAIN
+  AIR_COMMODORE
+  AIR_VICE_MARSHAL
+}
+
+enum Appointment {
+  COMMANDER
+  GOO
+  CO_FLYING_WING
+  CO_ENGINEERING
+  OPERATIONS_OFFICER
+  TRAINING_OFFICER
+  SAFETY_OFFICER
+  SQUADRON_PILOT
+  ADMIN
+}
+
+enum FlightStatus {
+  CAPTAIN
+  CO_PILOT
+  NONE
+}
+
+enum PilotCategory {
+  INSTRUCTOR
+  TRAINEE
+  NIL
+}
+
+enum AccountStatus {
+  PENDING_VERIFICATION
+  PENDING_ACTIVATION
+  ACTIVE
+  SUSPENDED
+}
+
+enum AircraftStatus {
+  SERVICEABLE
+  UNSERVICEABLE
+  UNDER_MAINTENANCE
+  INSPECTION_DUE
+}
+
+// How much email a person gets. Everything always appears in the app's notifications.
+enum EmailAlerts {
+  URGENT // only items that need the person's action soon (default)
+  ALL // urgent items at once, everything else in one email at most every hour
+  NONE // no notification emails (sign-in emails such as password reset still go)
+}
+
+enum MissionCategory {
+  TRAINING
+  OPERATIONAL
+}
+
+enum OrderStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum MissionStatus {
+  DRAFT
+  AWAITING_ENGINEERING
+  PUBLISHED
+  CREW_READY
+  RISK_SUBMITTED
+  CLEARED
+  COMPLETED
+  ABORTED
+  CANCELLED
+}
+
+enum Seat {
+  CAPTAIN
+  CO_PILOT
+  INSTRUCTOR
+  TRAINEE
+}
+
+enum Readiness {
+  PENDING
+  READY
+  NOT_AVAILABLE
+  NO_RESPONSE
+}
+
+enum RiskStatus {
+  SUBMITTED
+  CLEARED
+  REJECTED
+  WITHDRAWN
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ApproverRole {
+  COMMANDER
+  CO_FLYING_WING
+  CO_ENGINEERING
+  OPERATIONS_OFFICER
+}
+
+enum ApprovalDecision {
+  APPROVE
+  APPROVE_WITH_REMARKS
+  REJECT
+}
+
+enum FlightPlanStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+}
+
+enum MissionOutcome {
+  COMPLETED
+  ABORTED
+}
+
+enum SnagStatus {
+  OPEN
+  CLOSED
+}
+
+enum Priority {
+  ROUTINE
+  PRIORITY
+  IMMEDIATE
+}
+
+enum SafetyReportKind {
+  HAZARD
+  INCIDENT
+}
+
+enum SafetyReportStatus {
+  OPEN
+  UNDER_REVIEW
+  CLOSED
+}
+
+enum WeatherKind {
+  METAR
+  TAF
+}
+
+enum SummaryPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+}
+
+enum TokenPurpose {
+  VERIFY_EMAIL
+  RESET_PASSWORD
+}
+
+enum ChangeRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ───────────────────────────── People and access ─────────────────────────────
+
+model User {
+  id               String        @id @default(uuid()) @db.Uuid
+  rank             Rank
+  fullName         String        @map("full_name")
+  nafNumber        String        @unique @map("naf_number")
+  email            String        @unique
+  phone            String
+  appointment      Appointment
+  flightStatus     FlightStatus  @default(NONE) @map("flight_status")
+  pilotCategory    PilotCategory @default(NIL) @map("pilot_category")
+  passwordHash     String        @map("password_hash")
+  emailVerifiedAt  DateTime?     @map("email_verified_at")
+  accountStatus    AccountStatus @default(PENDING_VERIFICATION) @map("account_status")
+  totpSecretEnc    String?       @map("totp_secret_enc")
+  totpEnabled      Boolean       @default(false) @map("totp_enabled")
+  failedLogins     Int           @default(0) @map("failed_logins")
+  lockedUntil      DateTime?     @map("locked_until")
+  lastLoginAt      DateTime?     @map("last_login_at")
+  emailAlerts      EmailAlerts   @default(URGENT) @map("email_alerts")
+  photo            Bytes?
+  photoMime        String?       @map("photo_mime")
+  photoUpdatedAt   DateTime?     @map("photo_updated_at")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+
+  sessions             Session[]
+  authTokens           AuthToken[]
+  changeRequests       ProfileChangeRequest[] @relation("RequestedBy")
+  decidedRequests      ProfileChangeRequest[] @relation("DecidedBy")
+  crewSeats            MissionCrew[]
+  missionsCreated      Mission[]              @relation("MissionCreatedBy")
+  riskSubmitted        RiskAssessment[]       @relation("RiskSubmittedBy")
+  imsafeChecks         ImsafeCheck[]
+  approvals            RiskApproval[]
+  flightPlans          FlightPlan[]           @relation("PlanSubmittedBy")
+  flightPlansApproved  FlightPlan[]           @relation("PlanApprovedBy")
+  missionOrders        MissionOrder[]          @relation("OrderCreatedBy")
+  ordersDecided        MissionOrder[]          @relation("OrderDecidedBy")
+  pushDevices          PushDevice[]
+  missionReports       MissionReport[]
+  snagsClosed          Snag[]                 @relation("SnagClosedBy")
+  snagsRaised          Snag[]                 @relation("SnagRaisedBy")
+  serviceabilityChecks ServiceabilityCheck[]
+  aircraftChanges      AircraftStatusHistory[]
+  safetyReports        SafetyReport[]
+  comments             Comment[]
+  weatherReports       WeatherReport[]
+  attachments          Attachment[]
+  notifications        Notification[]
+  auditEntries         AuditLog[]
+  delegationsFrom      Delegation[]           @relation("DelegatedFrom")
+  delegationsTo        Delegation[]           @relation("DelegatedTo")
+  delegationsSet       Delegation[]           @relation("DelegationSetBy")
+  syncReceipts         SyncReceipt[]
+
+  @@index([appointment])
+  @@map("users")
+}
+
+model ProfileChangeRequest {
+  id          String              @id @default(uuid()) @db.Uuid
+  userId      String              @map("user_id") @db.Uuid
+  field       String // appointment | flightStatus | pilotCategory | rank
+  oldValue    String              @map("old_value")
+  newValue    String              @map("new_value")
+  reason      String?
+  status      ChangeRequestStatus @default(PENDING)
+  decidedById String?             @map("decided_by") @db.Uuid
+  decidedAt   DateTime?           @map("decided_at")
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+
+  user      User  @relation("RequestedBy", fields: [userId], references: [id])
+  decidedBy User? @relation("DecidedBy", fields: [decidedById], references: [id])
+
+  @@index([status])
+  @@map("profile_change_requests")
+}
+
+model Session {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  refreshTokenHash String    @unique @map("refresh_token_hash")
+  device           String?
+  ip               String?
+  lastSeenAt       DateTime  @default(now()) @map("last_seen_at")
+  expiresAt        DateTime  @map("expires_at")
+  revokedAt        DateTime? @map("revoked_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model AuthToken {
+  id        String       @id @default(uuid()) @db.Uuid
+  userId    String       @map("user_id") @db.Uuid
+  purpose   TokenPurpose
+  tokenHash String       @unique @map("token_hash")
+  expiresAt DateTime     @map("expires_at")
+  usedAt    DateTime?    @map("used_at")
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("auth_tokens")
+}
+
+model Delegation {
+  id         String    @id @default(uuid()) @db.Uuid
+  fromUserId String    @map("from_user_id") @db.Uuid // the Commander
+  toUserId   String    @map("to_user_id") @db.Uuid // the GOO (acting Commander)
+  startsAt   DateTime  @map("starts_at")
+  endsAt     DateTime  @map("ends_at")
+  setById    String    @map("set_by") @db.Uuid
+  cancelledAt DateTime? @map("cancelled_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  fromUser User @relation("DelegatedFrom", fields: [fromUserId], references: [id])
+  toUser   User @relation("DelegatedTo", fields: [toUserId], references: [id])
+  setBy    User @relation("DelegationSetBy", fields: [setById], references: [id])
+
+  @@index([toUserId, startsAt, endsAt])
+  @@map("delegations")
+}
+
+// ───────────────────────────── Aircraft ─────────────────────────────
+
+model Aircraft {
+  id                       String         @id @default(uuid()) @db.Uuid
+  registration             String         @unique
+  type                     String
+  status                   AircraftStatus @default(SERVICEABLE)
+  flyingHours              Decimal        @default(0) @map("flying_hours") @db.Decimal(10, 2)
+  hoursToNextInspection    Decimal        @default(0) @map("hours_to_next_inspection") @db.Decimal(8, 2)
+  inspectionIntervalHours  Decimal        @default(100) @map("inspection_interval_hours") @db.Decimal(8, 2)
+  inspectionIntervalDays   Int?           @map("inspection_interval_days")
+  lastInspectionDate       DateTime?      @map("last_inspection_date") @db.Date
+  nextInspectionDue        DateTime?      @map("next_inspection_due") @db.Date
+  maintenanceRemarks       String?        @map("maintenance_remarks")
+  active                   Boolean        @default(true)
+  createdAt                DateTime       @default(now()) @map("created_at")
+  updatedAt                DateTime       @updatedAt @map("updated_at")
+
+  history         AircraftStatusHistory[]
+  checks          ServiceabilityCheck[]
+  missions        Mission[]
+  snags           Snag[]
+  safetyReports   SafetyReport[]
+
+  @@map("aircraft")
+}
+
+model AircraftStatusHistory {
+  id                    String         @id @default(uuid()) @db.Uuid
+  aircraftId            String         @map("aircraft_id") @db.Uuid
+  status                AircraftStatus
+  flyingHours           Decimal        @map("flying_hours") @db.Decimal(10, 2)
+  hoursToNextInspection Decimal        @map("hours_to_next_inspection") @db.Decimal(8, 2)
+  remarks               String?
+  changedById           String?        @map("changed_by") @db.Uuid
+  createdAt             DateTime       @default(now()) @map("created_at")
+  updatedAt             DateTime       @updatedAt @map("updated_at")
+
+  aircraft  Aircraft @relation(fields: [aircraftId], references: [id], onDelete: Cascade)
+  changedBy User?    @relation(fields: [changedById], references: [id])
+
+  @@index([aircraftId, createdAt])
+  @@map("aircraft_status_history")
+}
+
+model ServiceabilityCheck {
+  id            String         @id @default(uuid()) @db.Uuid
+  aircraftId    String         @map("aircraft_id") @db.Uuid
+  flyingDate    DateTime       @map("flying_date") @db.Date
+  status        AircraftStatus
+  remarks       String?
+  confirmedById String         @map("confirmed_by") @db.Uuid
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  aircraft    Aircraft @relation(fields: [aircraftId], references: [id], onDelete: Cascade)
+  confirmedBy User     @relation(fields: [confirmedById], references: [id])
+
+  @@unique([aircraftId, flyingDate])
+  @@map("serviceability_checks")
+}
+
+model Snag {
+  id              String     @id @default(uuid()) @db.Uuid
+  aircraftId      String     @map("aircraft_id") @db.Uuid
+  missionReportId String?    @map("mission_report_id") @db.Uuid
+  description     String
+  status          SnagStatus @default(OPEN)
+  raisedById      String     @map("raised_by") @db.Uuid
+  closedById      String?    @map("closed_by") @db.Uuid
+  closedAt        DateTime?  @map("closed_at")
+  actionTaken     String?    @map("action_taken")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  aircraft      Aircraft       @relation(fields: [aircraftId], references: [id])
+  missionReport MissionReport? @relation(fields: [missionReportId], references: [id])
+  raisedBy      User           @relation("SnagRaisedBy", fields: [raisedById], references: [id])
+  closedBy      User?          @relation("SnagClosedBy", fields: [closedById], references: [id])
+
+  @@index([status])
+  @@map("snags")
+}
+
+// ───────────────────────────── Missions ─────────────────────────────
+
+model Mission {
+  id                    String        @id @default(uuid()) @db.Uuid
+  missionNo             String        @unique @map("mission_no")
+  date                  DateTime      @db.Date
+  name                  String
+  category              MissionCategory
+  type                  String // sub-type code, see MISSION_TYPES in src/lib/constants.ts
+  aircraftId            String        @map("aircraft_id") @db.Uuid
+  briefingAt            DateTime      @map("briefing_at")
+  takeoffAt             DateTime      @map("takeoff_at")
+  landingAt             DateTime      @map("landing_at")
+  status                MissionStatus @default(DRAFT)
+  cancelReason          String?       @map("cancel_reason")
+  createdById           String        @map("created_by") @db.Uuid
+  publishedAt           DateTime?     @map("published_at")
+  readinessRequestedAt  DateTime?     @map("readiness_requested_at")
+  noResponseFlaggedAt   DateTime?     @map("no_response_flagged_at")
+  riskReminderSentAt    DateTime?     @map("risk_reminder_sent_at")
+  overdueFlaggedAt      DateTime?     @map("overdue_flagged_at")
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+
+  aircraft        Aircraft          @relation(fields: [aircraftId], references: [id])
+  createdBy       User              @relation("MissionCreatedBy", fields: [createdById], references: [id])
+  crew            MissionCrew[]
+  riskAssessments RiskAssessment[]
+  flightPlans     FlightPlan[]
+  order           MissionOrder?
+  report          MissionReport?
+  safetyReports   SafetyReport[]
+
+  @@index([date])
+  @@index([status, takeoffAt])
+  @@map("missions")
+}
+
+model MissionCrew {
+  id              String    @id @default(uuid()) @db.Uuid
+  missionId       String    @map("mission_id") @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  seat            Seat
+  readiness       Readiness @default(PENDING)
+  readinessReason String?   @map("readiness_reason")
+  respondedAt     DateTime? @map("responded_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([missionId, userId])
+  @@unique([missionId, seat])
+  @@map("mission_crew")
+}
+
+model MissionOrder {
+  id                 String      @id @default(uuid()) @db.Uuid
+  missionId          String      @unique @map("mission_id") @db.Uuid
+  orderNo            String      @unique @map("order_no")
+  taskDescription    String      @map("task_description")
+  objectives         String
+  priority           Priority    @default(ROUTINE)
+  operationalRemarks String?     @map("operational_remarks")
+  status             OrderStatus @default(DRAFT)
+  submittedAt        DateTime?   @map("submitted_at")
+  decidedById        String?     @map("decided_by") @db.Uuid
+  decidedAt          DateTime?   @map("decided_at")
+  decisionRemarks    String?     @map("decision_remarks")
+  createdById        String      @map("created_by") @db.Uuid
+  createdAt          DateTime    @default(now()) @map("created_at")
+  updatedAt          DateTime    @updatedAt @map("updated_at")
+
+  mission   Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  createdBy User    @relation("OrderCreatedBy", fields: [createdById], references: [id])
+  decidedBy User?   @relation("OrderDecidedBy", fields: [decidedById], references: [id])
+
+  @@index([status])
+
+  @@map("mission_orders")
+}
+
+model FlightPlan {
+  id                 String           @id @default(uuid()) @db.Uuid
+  missionId          String?          @map("mission_id") @db.Uuid
+  departure          String
+  destination        String
+  route              String
+  alternate          String
+  estFlightTimeMin   Int              @map("est_flight_time_min")
+  fuelRequiredKg     Decimal          @map("fuel_required_kg") @db.Decimal(8, 1)
+  fuelRequiredL      Decimal          @map("fuel_required_l") @db.Decimal(8, 1)
+  crewNotes          String?          @map("crew_notes")
+  status             FlightPlanStatus @default(DRAFT)
+  submittedById      String           @map("submitted_by") @db.Uuid
+  submittedAt        DateTime?        @map("submitted_at")
+  approvedById       String?          @map("approved_by") @db.Uuid
+  approvedAt         DateTime?        @map("approved_at")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+
+  mission     Mission? @relation(fields: [missionId], references: [id])
+  submittedBy User     @relation("PlanSubmittedBy", fields: [submittedById], references: [id])
+  approvedBy  User?    @relation("PlanApprovedBy", fields: [approvedById], references: [id])
+
+  @@index([status])
+  @@map("flight_plans")
+}
+
+model MissionReport {
+  id             String         @id @default(uuid()) @db.Uuid
+  missionId      String         @unique @map("mission_id") @db.Uuid
+  outcome        MissionOutcome
+  flightTimeMin  Int            @map("flight_time_min")
+  fuelUsedKg     Decimal        @map("fuel_used_kg") @db.Decimal(8, 1)
+  fuelUsedL      Decimal        @map("fuel_used_l") @db.Decimal(8, 1)
+  abortReason    String?        @map("abort_reason")
+  missionOutcome String?        @map("mission_outcome")
+  remarks        String
+  submittedById  String         @map("submitted_by") @db.Uuid
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  mission     Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  submittedBy User    @relation(fields: [submittedById], references: [id])
+  snags       Snag[]
+
+  @@map("mission_reports")
+}
+
+// ───────────────────────────── Risk ─────────────────────────────
+
+model RiskAssessment {
+  id                  String     @id @default(uuid()) @db.Uuid
+  missionId           String     @map("mission_id") @db.Uuid
+  version             Int        @default(1)
+  submittedById       String     @map("submitted_by") @db.Uuid
+  weather             Int
+  aircraftCondition   Int        @map("aircraft_condition")
+  crewReadiness       Int        @map("crew_readiness")
+  missionComplexity   Int        @map("mission_complexity")
+  fuelStatus          Int        @map("fuel_status")
+  terrain             Int
+  fatigue             Int
+  operationalThreats  Int        @map("operational_threats")
+  weatherLoweredReason String?   @map("weather_lowered_reason")
+  mitigations         String?
+  totalScore          Int        @map("total_score")
+  level               RiskLevel
+  levelReason         String     @map("level_reason")
+  status              RiskStatus @default(SUBMITTED)
+  requiredRoles       ApproverRole[] @map("required_roles")
+  createdAt           DateTime   @default(now()) @map("created_at")
+  updatedAt           DateTime   @updatedAt @map("updated_at")
+
+  mission     Mission        @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  submittedBy User           @relation("RiskSubmittedBy", fields: [submittedById], references: [id])
+  imsafe      ImsafeCheck[]
+  approvals   RiskApproval[]
+
+  @@unique([missionId, version])
+  @@index([status])
+  @@map("risk_assessments")
+}
+
+model ImsafeCheck {
+  id               String   @id @default(uuid()) @db.Uuid
+  riskAssessmentId String   @map("risk_assessment_id") @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  illness          Boolean
+  medication       Boolean
+  stress           Boolean
+  alcohol          Boolean
+  fatigue          Boolean
+  eating           Boolean
+  notes            String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  riskAssessment RiskAssessment @relation(fields: [riskAssessmentId], references: [id], onDelete: Cascade)
+  user           User           @relation(fields: [userId], references: [id])
+
+  @@unique([riskAssessmentId, userId])
+  @@map("imsafe_checks")
+}
+
+model RiskApproval {
+  id               String            @id @default(uuid()) @db.Uuid
+  riskAssessmentId String            @map("risk_assessment_id") @db.Uuid
+  approverRole     ApproverRole      @map("approver_role")
+  approverId       String?           @map("approver_id") @db.Uuid
+  decision         ApprovalDecision?
+  remarks          String?
+  actingFor        Boolean           @default(false) @map("acting_for")
+  decidedAt        DateTime?         @map("decided_at")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+
+  riskAssessment RiskAssessment @relation(fields: [riskAssessmentId], references: [id], onDelete: Cascade)
+  approver       User?          @relation(fields: [approverId], references: [id])
+
+  @@unique([riskAssessmentId, approverRole])
+  @@map("risk_approvals")
+}
+
+model SafetyReport {
+  id           String             @id @default(uuid()) @db.Uuid
+  reportedById String             @map("reported_by") @db.Uuid
+  kind         SafetyReportKind
+  description  String
+  location     String?
+  aircraftId   String?            @map("aircraft_id") @db.Uuid
+  missionId    String?            @map("mission_id") @db.Uuid
+  status       SafetyReportStatus @default(OPEN)
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+
+  reportedBy User      @relation(fields: [reportedById], references: [id])
+  aircraft   Aircraft? @relation(fields: [aircraftId], references: [id])
+  mission    Mission?  @relation(fields: [missionId], references: [id])
+
+  @@index([status])
+  @@map("safety_reports")
+}
+
+model Comment {
+  id         String   @id @default(uuid()) @db.Uuid
+  entityType String   @map("entity_type") // risk_assessment | safety_report | mission
+  entityId   String   @map("entity_id") @db.Uuid
+  authorId   String   @map("author_id") @db.Uuid
+  body       String
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([entityType, entityId])
+  @@map("comments")
+}
+
+// ───────────────────────────── Weather, files, system ─────────────────────────────
+
+model WeatherReport {
+  id            String      @id @default(uuid()) @db.Uuid
+  kind          WeatherKind
+  station       String
+  rawText       String      @map("raw_text")
+  windDir       Int?        @map("wind_dir") // null = variable
+  windSpeedKt   Int?        @map("wind_speed_kt")
+  gustKt        Int?        @map("gust_kt")
+  visibilityM   Int?        @map("visibility_m")
+  temperatureC  Int?        @map("temperature_c")
+  dewpointC     Int?        @map("dewpoint_c")
+  qnhHpa        Int?        @map("qnh_hpa")
+  clouds        Json        @default("[]") // [{cover:"SCT", baseFt:1800, type?:"CB"}]
+  phenomena     Json        @default("[]") // ["-RA", "BR"]
+  changeGroups  String?     @map("change_groups") // TAF TEMPO/BECMG/FM groups as entered
+  ceilingFt     Int?        @map("ceiling_ft")
+  observedAt    DateTime?   @map("observed_at")
+  validFrom     DateTime?   @map("valid_from")
+  validTo       DateTime?   @map("valid_to")
+  enteredById   String      @map("entered_by") @db.Uuid
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  enteredBy User @relation(fields: [enteredById], references: [id])
+
+  @@index([kind, createdAt])
+  @@map("weather_reports")
+}
+
+model Attachment {
+  id           String   @id @default(uuid()) @db.Uuid
+  entityType   String   @map("entity_type") // mission_order | summary_report
+  entityId     String   @map("entity_id") @db.Uuid
+  fileName     String   @map("file_name")
+  mimeType     String   @map("mime_type")
+  sizeBytes    Int      @map("size_bytes")
+  storageKey   String   @unique @map("storage_key")
+  uploadedById String   @map("uploaded_by") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  @@index([entityType, entityId])
+  @@map("attachments")
+}
+
+model Notification {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  kind      String
+  title     String
+  body      String?
+  link      String?
+  readAt         DateTime? @map("read_at")
+  emailRequested Boolean   @default(false) @map("email_requested")
+  emailedAt      DateTime? @map("emailed_at")
+  pushedAt       DateTime? @map("pushed_at") // sent to the person's phones (or nothing to send to)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([emailRequested, emailedAt])
+  @@index([pushedAt, createdAt])
+  @@map("notifications")
+}
+
+model SummaryReport {
+  id          String        @id @default(uuid()) @db.Uuid
+  period      SummaryPeriod
+  periodStart DateTime      @map("period_start") @db.Date
+  periodEnd   DateTime      @map("period_end") @db.Date
+  figures     Json
+  pdfKey      String?       @map("pdf_key")
+  xlsxKey     String?       @map("xlsx_key")
+  generatedAt DateTime      @default(now()) @map("generated_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  @@unique([period, periodStart])
+  @@map("summary_reports")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id")
+  before     Json?
+  after      Json?
+  ip         String?
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_log")
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+model SyncReceipt {
+  id         String   @id @default(uuid()) @db.Uuid
+  clientOpId String   @unique @map("client_op_id")
+  userId     String   @map("user_id") @db.Uuid
+  result     Json
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sync_receipts")
+}
+
+// Unit branding images (logo, watermark), uploaded by Admin in Settings.
+model Asset {
+  key       String   @id // "logo" | "watermark"
+  mime      String
+  data      Bytes
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("assets")
+}
+
+// Phones and browsers that receive push notifications.
+// WEB = the installed web app (Web Push); FCM = the Play Store / App Store app (Firebase Cloud Messaging).
+enum PushPlatform {
+  WEB
+  FCM
+}
+
+model PushDevice {
+  id         String       @id @default(uuid()) @db.Uuid
+  userId     String       @map("user_id") @db.Uuid
+  platform   PushPlatform
+  endpoint   String       @unique // Web Push endpoint URL, or the FCM registration token
+  p256dh     String? // Web Push keys
+  auth       String?
+  label      String? // e.g. "Android phone", shown on My profile
+  createdAt  DateTime     @default(now()) @map("created_at")
+  lastUsedAt DateTime?    @map("last_used_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_devices")
+}

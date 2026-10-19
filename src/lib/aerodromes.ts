@@ -1,0 +1,50 @@
+// Nigerian aerodromes with ICAO location indicators, for picking the home aerodrome.
+// Source: Wikipedia "List of airports in Nigeria" (checked Oct 2026). Confirm against the current
+// NCAA AIP before relying on a code operationally. Helipads and airstrips without an ICAO code can
+// be entered by name in Settings.
+
+export type Aerodrome = { icao: string; name: string; place: string; kind: 'Civil' | 'Military' | 'Airstrip' };
+
+export const NIGERIAN_AERODROMES: Aerodrome[] = [
+  { icao: 'DNAA', name: 'Nnamdi Azikiwe International Airport', place: 'Abuja', kind: 'Civil' },
+  { icao: 'DNAI', name: 'Victor Attah International Airport', place: 'Uyo', kind: 'Civil' },
+  { icao: 'DNAK', name: 'Akure Airport', place: 'Akure', kind: 'Civil' },
+  { icao: 'DNAN', name: 'Chinua Achebe International Airport', place: 'Anambra', kind: 'Civil' },
+  { icao: 'DNAS', name: 'Asaba International Airport', place: 'Asaba', kind: 'Civil' },
+  { icao: 'DNBC', name: 'Sir Abubakar Tafawa Balewa Airport', place: 'Bauchi', kind: 'Civil' },
+  { icao: 'DNBE', name: 'Benin Airport', place: 'Benin City', kind: 'Civil' },
+  { icao: 'DNBI', name: 'Bida Airstrip', place: 'Bida', kind: 'Airstrip' },
+  { icao: 'DNBK', name: 'Sir Ahmadu Bello International Airport', place: 'Birnin Kebbi', kind: 'Civil' },
+  { icao: 'DNCA', name: 'Margaret Ekpo International Airport', place: 'Calabar', kind: 'Civil' },
+  { icao: 'DNDS', name: 'Dutse International Airport', place: 'Dutse', kind: 'Civil' },
+  { icao: 'DNEB', name: 'Ebonyi State International Airport', place: 'Abakaliki', kind: 'Civil' },
+  { icao: 'DNEN', name: 'Akanu Ibiam International Airport', place: 'Enugu', kind: 'Civil' },
+  { icao: 'DNGA', name: 'Gateway International Airport', place: 'Iperu-Remo', kind: 'Civil' },
+  { icao: 'DNGO', name: 'Gombe Lawanti International Airport', place: 'Gombe', kind: 'Civil' },
+  { icao: 'DNGU', name: 'Gusau Airstrip', place: 'Gusau', kind: 'Airstrip' },
+  { icao: 'DNIB', name: 'Ibadan Airport', place: 'Ibadan', kind: 'Civil' },
+  { icao: 'DNIL', name: 'General Tunde Idiagbon International Airport', place: 'Ilorin', kind: 'Civil' },
+  { icao: 'DNIM', name: 'Sam Mbakwe International Cargo Airport', place: 'Owerri', kind: 'Civil' },
+  { icao: 'DNJA', name: 'Danbaba Danfulani Suntai Airport', place: 'Jalingo', kind: 'Civil' },
+  { icao: 'DNJO', name: 'Yakubu Gowon Airport', place: 'Jos', kind: 'Civil' },
+  { icao: 'DNKA', name: 'Kaduna International Airport', place: 'Kaduna', kind: 'Civil' },
+  { icao: 'DNKN', name: 'Mallam Aminu Kano International Airport', place: 'Kano', kind: 'Civil' },
+  { icao: 'DNKT', name: 'Katsina Airport', place: 'Katsina', kind: 'Civil' },
+  { icao: 'DNMA', name: 'Maiduguri International Airport', place: 'Maiduguri', kind: 'Civil' },
+  { icao: 'DNMK', name: 'Makurdi Airport / NAF Base Makurdi', place: 'Makurdi', kind: 'Military' },
+  { icao: 'DNMM', name: 'Murtala Muhammed International Airport', place: 'Lagos', kind: 'Civil' },
+  { icao: 'DNMN', name: 'Minna Airport', place: 'Minna', kind: 'Civil' },
+  { icao: 'DNPM', name: 'NAF Base Port Harcourt', place: 'Port Harcourt', kind: 'Military' },
+  { icao: 'DNAA', name: 'Nnamdi Azikiwe International Airport', place: 'Port Harcourt', kind: 'Civil' },
+  { icao: 'DNSO', name: 'Sadiq Abubakar III International Airport', place: 'Sokoto', kind: 'Civil' },
+  { icao: 'DNSU', name: 'Osubi Airport', place: 'Warri', kind: 'Civil' },
+  { icao: 'DNYO', name: 'Yola Airport', place: 'Yola', kind: 'Civil' },
+  { icao: 'DNZA', name: 'Zaria Airport', place: 'Zaria', kind: 'Civil' },
+  { icao: 'DN50', name: 'Shiroro Airstrip', place: 'Shiroro', kind: 'Airstrip' },
+  { icao: 'DN51', name: 'Ajaokuta Airstrip', place: 'Ajaokuta', kind: 'Airstrip' },
+  { icao: 'DN53', name: 'NAF Base Kaduna', place: 'Kaduna', kind: 'Military' },
+  { icao: 'DN54', name: 'Bajoga Northeast Airport', place: 'Bajoga', kind: 'Airstrip' },
+  { icao: 'DN55', name: 'Eket Airstrip', place: 'Eket', kind: 'Airstrip' },
+  { icao: 'DN56', name: 'Escravos Airstrip', place: 'Escravos', kind: 'Airstrip' },
+  { icao: 'DN57', name: 'NAF Base Katsina', place: 'Katsina', kind: 'Military' },
+];

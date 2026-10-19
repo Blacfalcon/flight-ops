@@ -1,0 +1,14 @@
+{$SITE_ADDRESS} {
+	encode zstd gzip
+
+	# On a closed network with no public domain, uncomment the next line to use a certificate Caddy issues itself.
+	# tls internal
+
+	header {
+		-Server
+	}
+
+	reverse_proxy app:3000 {
+		header_up X-Real-IP {remote_host}
+	}
+}

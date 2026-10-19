@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-ground font-sans text-[14px] text-ink antialiased;
+  }
+  h1 {
+    @apply text-2xl font-bold tracking-tight;
+  }
+  h2 {
+    @apply text-[17px] font-semibold;
+  }
+  a {
+    @apply text-brand hover:text-brand-dark;
+  }
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-brand;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-line bg-white;
+  }
+  .card-head {
+    @apply flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-4;
+  }
+  .card-body {
+    @apply px-5 py-4;
+  }
+  .btn {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-lg px-4 font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-white hover:bg-brand-dark hover:text-white;
+  }
+  .btn-secondary {
+    @apply btn border border-line bg-white text-ink hover:bg-ground hover:text-ink;
+  }
+  .btn-outline {
+    @apply btn border border-brand bg-white text-brand hover:bg-brand-soft;
+  }
+  .btn-danger {
+    @apply btn border border-bad-solid bg-white text-bad-fg hover:bg-bad-bg;
+  }
+  .btn-sm {
+    @apply h-9 px-3 text-[13px];
+  }
+  .label {
+    @apply mb-1.5 block text-[13px] font-semibold;
+  }
+  .input {
+    @apply h-11 w-full rounded-lg border border-[#C9D3E0] bg-white px-3 text-[14px] text-ink placeholder:text-ink-muted/70;
+  }
+  .input-error {
+    @apply border-2 border-bad-solid;
+  }
+  .textarea {
+    @apply w-full rounded-lg border border-[#C9D3E0] bg-white px-3 py-2.5 text-[14px] text-ink;
+  }
+  .field-error {
+    @apply mt-1 text-[13px] font-medium text-bad-fg;
+  }
+  .hint {
+    @apply mt-1 text-[13px] text-ink-muted;
+  }
+  .pill {
+    @apply inline-flex items-center whitespace-nowrap rounded-md px-2 py-0.5 text-[12px] font-semibold;
+  }
+  .pill-good {
+    @apply pill bg-good-bg text-good-fg;
+  }
+  .pill-warn {
+    @apply pill bg-warn-bg text-warn-fg;
+  }
+  .pill-bad {
+    @apply pill bg-bad-bg text-bad-fg;
+  }
+  .pill-info {
+    @apply pill bg-brand-soft text-brand-text;
+  }
+  .pill-none {
+    @apply pill bg-[#EEF1F5] text-ink-muted;
+  }
+  .table {
+    @apply w-full border-collapse text-[13px];
+  }
+  .table th {
+    @apply bg-[#F7F9FC] px-3 py-2.5 text-left font-semibold text-ink-muted first:pl-5 last:pr-5;
+  }
+  .table td {
+    @apply border-t border-[#E8EDF3] px-3 py-3 align-top first:pl-5 last:pr-5;
+  }
+  .mono {
+    @apply font-mono font-medium;
+  }
+  .alert-bad {
+    @apply rounded-lg bg-bad-bg px-4 py-3 text-[#7A1A14];
+  }
+  .alert-warn {
+    @apply rounded-lg bg-warn-bg px-4 py-3 text-[#6B3A04];
+  }
+  .alert-good {
+    @apply rounded-lg bg-good-bg px-4 py-3 text-[#0B4F2B];
+  }
+  .alert-info {
+    @apply rounded-lg bg-brand-soft px-4 py-3 text-brand-text;
+  }
+  .kpi {
+    @apply card flex flex-col gap-1.5 px-5 py-4;
+  }
+  .kpi-label {
+    @apply font-medium text-ink-muted;
+  }
+  .kpi-value {
+    @apply text-[30px] font-bold leading-tight;
+  }
+  .kpi-sub {
+    @apply text-[13px] text-ink-muted;
+  }
+}
+
+@media print {
+  nav,
+  .no-print {
+    display: none !important;
+  }
+}
