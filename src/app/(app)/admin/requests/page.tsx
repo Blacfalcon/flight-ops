@@ -13,6 +13,7 @@ const LABELS: Record<string, { title: string; values: Record<string, string> }> 
   appointment: { title: 'Appointment', values: APPOINTMENT_LABEL },
   flightStatus: { title: 'Flight status', values: FLIGHT_STATUS_LABEL },
   pilotCategory: { title: 'Pilot category', values: PILOT_CATEGORY_LABEL },
+  accountDeletion: { title: 'Delete account', values: { ACTIVE: 'Active', SUSPENDED: 'Suspended', PENDING_ACTIVATION: 'Awaiting activation', PENDING_VERIFICATION: 'Email not confirmed', DELETED: 'Sign-in and contact details deleted' } },
 };
 
 export default async function RequestsPage() {
@@ -27,7 +28,7 @@ export default async function RequestsPage() {
   };
   return (
     <>
-      <PageHeader title="Change requests" sub="Changes to rank, appointment, flight status or pilot category take effect only after approval. An appointment change signs the person out." />
+      <PageHeader title="Change requests" sub="Changes to rank, appointment, flight status or pilot category take effect only after approval. An appointment change signs the person out. Approving an account deletion deletes the person's email, phone, photo and password and closes the account; their name stays on unit records." />
       <Card title={`Pending (${pending.length})`} bodyClass="">
         {pending.length === 0 ? (
           <Empty>Nothing waiting.</Empty>

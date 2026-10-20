@@ -49,6 +49,7 @@ export async function summaryToXlsx(f: SummaryFigures, unit: UnitLabel): Promise
     { k: 'Risk assessments Low / Medium / High', v: `${f.safety.low} / ${f.safety.medium} / ${f.safety.high}` },
     { k: 'Risk assessments rejected', v: f.safety.rejected },
     { k: 'Hazard / incident reports', v: `${f.safety.hazards} / ${f.safety.incidents}` },
+    { k: 'Sorties self-authorised by a crewed approver', v: f.safety.selfAuthorised ?? 0 },
   ]);
 
   const d = wb.addWorksheet('By day');
@@ -198,7 +199,7 @@ export function summaryToPdf(f: SummaryFigures, unit: UnitLabel, opts: { part?: 
       section('Maintenance performance');
       doc.text(`Snags raised: ${f.maintenance.snagsRaised} · closed: ${f.maintenance.snagsClosed} · average days to close: ${f.maintenance.avgDaysToClose ?? '—'}`);
       section('Safety performance');
-      doc.text(`Risk assessments — Low ${f.safety.low}, Medium ${f.safety.medium}, High ${f.safety.high}; rejected ${f.safety.rejected}. Hazard reports ${f.safety.hazards}, incident reports ${f.safety.incidents}.`);
+      doc.text(`Risk assessments — Low ${f.safety.low}, Medium ${f.safety.medium}, High ${f.safety.high}; rejected ${f.safety.rejected}. Hazard reports ${f.safety.hazards}, incident reports ${f.safety.incidents}. Sorties self-authorised by a crewed approver ${f.safety.selfAuthorised ?? 0}.`);
     }
 
     doc.moveDown(2).fontSize(8).fill(muted).text(`Generated ${new Date().toISOString().slice(0, 16).replace('T', ' ')}Z by ${unit.short} Flight Ops. Figures are fixed at generation.`);

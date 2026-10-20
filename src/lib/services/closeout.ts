@@ -89,7 +89,7 @@ export async function submitMissionReport(missionId: string, userId: string, inp
     const staff = await usersWithAppointments(['OPERATIONS_OFFICER', 'CO_FLYING_WING'], tx);
     await notify(staff, { kind: `mission.${input.outcome.toLowerCase()}`, title: `${m.missionNo} ${input.outcome === 'COMPLETED' ? 'completed' : 'aborted'}`, link: `/missions/${missionId}` }, tx);
     if (snags.length) {
-      const engr = await usersWithAppointments(['CO_ENGINEERING'], tx);
+      const engr = await usersWithAppointments(['CO_ENGINEERING', 'ENGINEERING_OFFICER'], tx);
       await notify(engr, { kind: 'snag.raised', title: `${snags.length} snag(s) raised on ${m.aircraft.registration}`, link: '/engineering/snags', email: true }, tx);
     }
     await audit(userId, `mission.${input.outcome.toLowerCase()}`, 'mission', missionId, { after: { ...input, fuel } }, tx);

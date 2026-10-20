@@ -6,6 +6,7 @@ import { eligibleForSeat, validateCrew, type CrewMember } from '@/lib/rules/pair
 import { AIRCRAFT_STATUS_LABEL, MISSION_CATEGORIES, MISSION_CATEGORY_LABEL, MISSION_TYPES, ORDER_STATUS_LABEL, PRIORITY_LABEL, SEATS, SEAT_LABEL, type AircraftStatusValue, type MissionCategoryValue, type SeatValue } from '@/lib/constants';
 import { Field, FormError, useSubmit } from '../form';
 import { formatHours } from '@/lib/hours';
+import { selfAuthWarning, type ApproverHolder, type ApproverRoleKey } from '@/lib/rules/approvals';
 
 export type Pilot = { id: string; name: string; flightStatus: CrewMember['flightStatus']; pilotCategory: CrewMember['pilotCategory'] };
 
@@ -30,7 +31,19 @@ type ServiceabilityItem = {
   check: { status: string } | null;
 };
 
-export function ScheduleBuilder({ initial, pilots, canOperational }: { initial: Initial; pilots: Pilot[]; canOperational: boolean }) {
+export function ScheduleBuilder({
+  initial,
+  pilots,
+  canOperational,
+  approvers = [],
+  requiredRiskRoles = ['CO_FLYING_WING', 'COMMANDER'],
+}: {
+  initial: Initial;
+  pilots: Pilot[];
+  canOperational: boolean;
+  approvers?: ApproverHolder[];
+  requiredRiskRoles?: ApproverRoleKey[];
+}) {
   const s = useSubmit();
   const [v, setV] = useState<Initial>(initial);
   const [fleet, setFleet] = useState<ServiceabilityItem[] | null>(null);
@@ -62,6 +75,7 @@ export function ScheduleBuilder({ initial, pilots, canOperational }: { initial: 
   );
   const crewErrors = validateCrew(crew);
   const crewErr = (field: string) => crewErrors.find((e) => e.field === field)?.message ?? s.fields[field];
+  const selfAuthNote = selfAuthWarning(approvers, crew.map((c) => c.userId), requiredRiskRoles);
 
   const timeErrors: Record<string, string> = {};
   if (v.briefingTime && v.takeoffTime && v.briefingTime >= v.takeoffTime) timeErrors.briefingTime = 'Briefing must be before take-off.';
@@ -212,6 +226,11 @@ export function ScheduleBuilder({ initial, pilots, canOperational }: { initial: 
           </div>
         </fieldset>
 
+        {selfAuthNote && (
+          <div role="status" className="alert-warn">
+            {selfAuthNote}
+          </div>
+        )}
         <div className="flex flex-wrap justify-end gap-2.5">
           <a href={`/schedule?date=${v.date}`} className="btn-secondary">
             Cancel
@@ -228,6 +247,7 @@ export function ScheduleBuilder({ initial, pilots, canOperational }: { initial: 
           <Check ok={aircraftOk} text={selected ? (aircraftOk ? `${selected.aircraft.registration} confirmed serviceable` : `${selected.aircraft.registration} not confirmed serviceable`) : 'Choose an aircraft'} />
           <Check ok={!!selected && hoursOk} text={selected ? `${formatHours(selected.aircraft.hoursToNextInspection)} to inspection; sortie ${plannedHours > 0 ? formatHours(plannedHours) : '—'}` : 'Hours to inspection'} />
           <Check ok={!crewErrors.length} text={crewErrors.length ? crewErrors[0].message : 'Crew pairing valid'} />
+          <Check ok={!selfAuthNote} text={selfAuthNote ? 'Approvers are crewed: self-authorisation will be needed' : 'An approver who is not crewed is free'} />
           <Check ok={!Object.keys(timeErrors).length} text={Object.values(timeErrors)[0] ?? 'Times in order'} />
           <p className="text-[12px] text-ink-muted">Overlaps with other missions are checked when you save.</p>
         </div>

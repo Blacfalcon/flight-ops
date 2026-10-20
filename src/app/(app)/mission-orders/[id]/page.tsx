@@ -7,6 +7,8 @@ import { formatDateTime, formatShortDate, localTime } from '@/lib/time';
 import { OrderDecision, PublishOne, UploadPdf } from '@/components/order-form';
 import { Avatar } from '@/components/avatar';
 import { Card, DefinitionGrid, PageHeader } from '@/components/ui';
+import { approverHolders } from '@/lib/services/approvers';
+import { orderNeedsSelfAuth } from '@/lib/rules/approvals';
 
 export const metadata = { title: 'Mission order' };
 
@@ -28,7 +30,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const attachments = await db.attachment.findMany({ where: { entityType: 'mission_order', entityId: o.id }, orderBy: { createdAt: 'asc' } });
   const closed = ['COMPLETED', 'ABORTED', 'CANCELLED'].includes(o.mission.status);
   const canEdit = !closed && (o.mission.category === 'TRAINING' ? auth.perms.has('mission.createTraining') : auth.perms.has('mission.createOperational'));
-  const canDecide = o.status === 'SUBMITTED' && auth.perms.has('order.approve') && !onCrew;
+  const crewIds = o.mission.crew.map((c) => c.userId);
+  const selfAuth = onCrew && o.status === 'SUBMITTED' && auth.perms.has('order.approve') && orderNeedsSelfAuth(await approverHolders(), crewIds);
+  const canDecide = o.status === 'SUBMITTED' && auth.perms.has('order.approve') && (!onCrew || selfAuth);
   const canPublish = auth.perms.has('mission.publish') && o.mission.status === 'DRAFT' && o.status === 'APPROVED';
 
   return (
@@ -55,7 +59,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               items={[
                 { label: 'Priority', value: PRIORITY_LABEL[o.priority] },
                 { label: 'Raised by', value: `${personName(o.createdBy)} · ${formatDateTime(o.createdAt)}` },
-                { label: 'Decision', value: o.decidedBy && o.decidedAt ? `${ORDER_STATUS_LABEL[o.status]} by ${personName(o.decidedBy)} · ${formatDateTime(o.decidedAt)}` : 'Awaiting CO Flying Wing or the Commander' },
+                { label: 'Decision', value: o.decidedBy && o.decidedAt ? `${ORDER_STATUS_LABEL[o.status]} by ${personName(o.decidedBy)}${o.selfAuthorised ? ' (self-authorised)' : ''} · ${formatDateTime(o.decidedAt)}` : 'Awaiting CO Flying Wing or the Commander' },
                 ...(o.decisionRemarks ? [{ label: 'Decision remarks', value: o.decisionRemarks }] : []),
               ]}
             />
@@ -73,7 +77,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 <p className="whitespace-pre-line">{o.operationalRemarks}</p>
               </div>
             )}
-            {canDecide && <OrderDecision orderId={o.id} />}
+            {canDecide && <OrderDecision orderId={o.id} selfAuth={selfAuth} />}
             {canPublish && <PublishOne missionId={o.missionId} />}
           </div>
         </Card>

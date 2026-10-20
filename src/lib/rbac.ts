@@ -6,6 +6,7 @@ export type Role =
   | 'COMMANDER'
   | 'CO_FLYING_WING'
   | 'CO_ENGINEERING'
+  | 'ENGINEERING_OFFICER'
   | 'OPERATIONS_OFFICER'
   | 'TRAINING_OFFICER'
   | 'SAFETY_OFFICER'
@@ -90,6 +91,24 @@ const ROLE_PERMS: Record<Role, Permission[]> = {
     'aircraft.update',
     'serviceability.view',
     'serviceability.confirm',
+    'schedule.viewAll',
+    'order.view',
+    'weather.view',
+    'risk.view',
+    'risk.comment',
+    'report.view',
+    'snag.view',
+    'snag.close',
+    'safety.view',
+    'safety.raise',
+    'summary.view',
+  ],
+  // Engineering Officers do the day-to-day engineering work; only CO Engineering confirms daily serviceability
+  ENGINEERING_OFFICER: [
+    'dashboard.engineering',
+    'aircraft.view',
+    'aircraft.update',
+    'serviceability.view',
     'schedule.viewAll',
     'order.view',
     'weather.view',
@@ -203,6 +222,7 @@ const APPOINTMENT_ROLE: Record<string, Role | null> = {
   GOO: null, // a pilot unless acting as Commander
   CO_FLYING_WING: 'CO_FLYING_WING',
   CO_ENGINEERING: 'CO_ENGINEERING',
+  ENGINEERING_OFFICER: 'ENGINEERING_OFFICER',
   OPERATIONS_OFFICER: 'OPERATIONS_OFFICER',
   TRAINING_OFFICER: 'TRAINING_OFFICER',
   SAFETY_OFFICER: 'SAFETY_OFFICER',

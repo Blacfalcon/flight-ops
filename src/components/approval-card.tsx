@@ -68,7 +68,7 @@ export function ApprovalSummary({ ra }: { ra: RiskLike }) {
           <div key={a.id} className="flex justify-between gap-3">
             <span>{APPROVER_ROLE_LABEL[a.approverRole]}</span>
             <span className={`font-semibold ${a.decision === 'REJECT' ? 'text-bad-fg' : a.decision ? 'text-good-fg' : 'text-warn-fg'}`}>
-              {a.decision ? `${DECISION_LABEL[a.decision]}${a.decidedAt ? ` ${localTime(a.decidedAt)}` : ''}${a.actingFor ? ' (acting)' : ''}` : 'Waiting'}
+              {a.decision ? `${DECISION_LABEL[a.decision]}${a.decidedAt ? ` ${localTime(a.decidedAt)}` : ''}${a.actingFor ? ' (acting)' : ''}${a.selfAuthorised ? ' (self-authorised)' : ''}` : 'Waiting'}
             </span>
           </div>
         ))}

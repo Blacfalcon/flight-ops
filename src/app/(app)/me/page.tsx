@@ -15,10 +15,12 @@ import { Card, DefinitionGrid, PageHeader } from '@/components/ui';
 import { ChangePassword, ChangeRequest, ContactForm, EmailAlertsForm } from '@/components/me-forms';
 import { PhotoUpload } from '@/components/photo-upload';
 import { PhonePush } from '@/components/phone-push';
+import { DeleteMyAccount } from '@/components/delete-account';
 
 export const metadata = { title: 'My profile' };
 
 const LABELS: Record<string, Record<string, string>> = { rank: RANK_LABEL, appointment: APPOINTMENT_LABEL, flightStatus: FLIGHT_STATUS_LABEL, pilotCategory: PILOT_CATEGORY_LABEL };
+const FIELD_TITLE: Record<string, string> = { rank: 'rank', appointment: 'appointment', flightStatus: 'flight status', pilotCategory: 'pilot category' };
 
 export default async function MePage() {
   const auth = await requirePage();
@@ -72,7 +74,7 @@ export default async function MePage() {
               {pending.map((p) => (
                 <div key={p.id} className="flex justify-between gap-3 rounded-lg bg-ground px-3 py-2">
                   <span>
-                    {p.field}: {LABELS[p.field]?.[p.oldValue] ?? p.oldValue} → {LABELS[p.field]?.[p.newValue] ?? p.newValue}
+                    {p.field === 'accountDeletion' ? 'Delete my account' : `${FIELD_TITLE[p.field] ?? p.field}: ${LABELS[p.field]?.[p.oldValue] ?? p.oldValue} → ${LABELS[p.field]?.[p.newValue] ?? p.newValue}`}
                   </span>
                   <span className={p.status === 'PENDING' ? 'pill-warn' : p.status === 'APPROVED' ? 'pill-good' : 'pill-bad'}>{p.status.charAt(0) + p.status.slice(1).toLowerCase()}</span>
                 </div>
@@ -82,6 +84,9 @@ export default async function MePage() {
         </Card>
         <Card title="Password">
           <ChangePassword />
+        </Card>
+        <Card title="Delete my account">
+          <DeleteMyAccount pending={pending.some((p) => p.field === 'accountDeletion' && p.status === 'PENDING')} />
         </Card>
       </div>
     </>

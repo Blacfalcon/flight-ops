@@ -28,7 +28,7 @@ export type SummaryFigures = {
     notAvailable: number;
   };
   maintenance: { snagsRaised: number; snagsClosed: number; avgDaysToClose: number | null };
-  safety: { low: number; medium: number; high: number; rejected: number; hazards: number; incidents: number };
+  safety: { low: number; medium: number; high: number; rejected: number; hazards: number; incidents: number; selfAuthorised?: number };
 };
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
@@ -144,13 +144,17 @@ export async function computeSummary(period: SummaryPeriod, start: string, end: 
     aircraft.set(c.aircraftId, a);
   }
 
-  const [raised, closed, ras, hazards, incidents] = await Promise.all([
+  const [raised, closed, ras, hazards, incidents, selfRisk, selfOrders] = await Promise.all([
     db.snag.count({ where: { createdAt: { gte: from, lt: to } } }),
     db.snag.findMany({ where: { closedAt: { gte: from, lt: to } }, select: { createdAt: true, closedAt: true } }),
     db.riskAssessment.findMany({ where: { createdAt: { gte: from, lt: to } }, select: { level: true, status: true } }),
     db.safetyReport.count({ where: { kind: 'HAZARD', createdAt: { gte: from, lt: to } } }),
     db.safetyReport.count({ where: { kind: 'INCIDENT', createdAt: { gte: from, lt: to } } }),
+    db.riskApproval.findMany({ where: { selfAuthorised: true, decidedAt: { gte: from, lt: to } }, select: { riskAssessment: { select: { missionId: true } } } }),
+    db.missionOrder.findMany({ where: { selfAuthorised: true, decidedAt: { gte: from, lt: to } }, select: { missionId: true } }),
   ]);
+  // Sorties with any self-authorised decision (order or risk), each counted once
+  const selfAuthorised = new Set([...selfRisk.map((r) => r.riskAssessment.missionId), ...selfOrders.map((o) => o.missionId)]).size;
   const avgDays = closed.length
     ? round1(closed.reduce((s, c) => s + ((c.closedAt as Date).getTime() - c.createdAt.getTime()) / 86_400_000, 0) / closed.length)
     : null;
@@ -177,6 +181,7 @@ export async function computeSummary(period: SummaryPeriod, start: string, end: 
       rejected: ras.filter((r) => r.status === 'REJECTED').length,
       hazards,
       incidents,
+      selfAuthorised,
     },
   };
 }

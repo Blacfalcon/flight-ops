@@ -28,6 +28,7 @@ enum Appointment {
   GOO
   CO_FLYING_WING
   CO_ENGINEERING
+  ENGINEERING_OFFICER // updates aircraft, hours, inspections and snags; only CO Engineering confirms daily serviceability
   OPERATIONS_OFFICER
   TRAINING_OFFICER
   SAFETY_OFFICER
@@ -475,6 +476,7 @@ model MissionOrder {
   decidedById        String?     @map("decided_by") @db.Uuid
   decidedAt          DateTime?   @map("decided_at")
   decisionRemarks    String?     @map("decision_remarks")
+  selfAuthorised     Boolean     @default(false) @map("self_authorised") // approved by a crewed approver because no other was free
   createdById        String      @map("created_by") @db.Uuid
   createdAt          DateTime    @default(now()) @map("created_at")
   updatedAt          DateTime    @updatedAt @map("updated_at")
@@ -600,6 +602,7 @@ model RiskApproval {
   decision         ApprovalDecision?
   remarks          String?
   actingFor        Boolean           @default(false) @map("acting_for")
+  selfAuthorised   Boolean           @default(false) @map("self_authorised") // decided by a crewed approver because no other was free
   decidedAt        DateTime?         @map("decided_at")
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")

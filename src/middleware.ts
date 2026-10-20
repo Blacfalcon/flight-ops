@@ -1,8 +1,9 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { ACCESS_COOKIE, REFRESH_COOKIE, verifyAccessToken } from '@/lib/auth/jwt';
+import { publicUrl } from '@/lib/public-url';
 
 // Page protection. API routes check sign-in themselves (they return 401 rather than redirecting).
-const PUBLIC = ['/login', '/register', '/verify-email', '/forgot-password', '/reset-password', '/offline'];
+const PUBLIC = ['/login', '/register', '/verify-email', '/forgot-password', '/reset-password', '/offline', '/privacy', '/delete-account'];
 
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
@@ -18,9 +19,9 @@ export async function middleware(req: NextRequest) {
 
   const next = encodeURIComponent(pathname + search);
   if (req.cookies.get(REFRESH_COOKIE)?.value) {
-    return NextResponse.redirect(new URL(`/api/v1/auth/refresh?next=${next}`, req.url));
+    return NextResponse.redirect(publicUrl(`/api/v1/auth/refresh?next=${next}`, req));
   }
-  return NextResponse.redirect(new URL(`/login?next=${next}`, req.url));
+  return NextResponse.redirect(publicUrl(`/login?next=${next}`, req));
 }
 
 export const config = {

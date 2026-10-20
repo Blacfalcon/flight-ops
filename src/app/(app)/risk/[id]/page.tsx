@@ -7,6 +7,8 @@ import { formatDateTime } from '@/lib/time';
 import { ApprovalSummary } from '@/components/approval-card';
 import { Card, PageHeader } from '@/components/ui';
 import { RiskActions } from '@/components/risk/risk-actions';
+import { approverHolders } from '@/lib/services/approvers';
+import { riskSlotNeedsSelfAuth, type ApproverRoleKey } from '@/lib/rules/approvals';
 
 export const metadata = { title: 'Risk assessment' };
 
@@ -18,9 +20,13 @@ export default async function RiskDetailPage({ params }: { params: Promise<{ id:
   const onCrew = ra.mission.crew.some((c) => c.userId === auth.user.id);
   if (!auth.perms.has('risk.view') && !onCrew) notFound();
 
-  const myRoles = approverRolesFor(auth.roles).filter((r) => ra.approvals.some((a) => a.approverRole === r && !a.decision));
+  const openRoles = approverRolesFor(auth.roles).filter((r) => ra.approvals.some((a) => a.approverRole === r && !a.decision));
   const imsafeComplete = ra.mission.crew.every((c) => ra.imsafe.some((i) => i.userId === c.userId));
-  const canDecide = ra.status === 'SUBMITTED' && myRoles.length > 0 && !onCrew;
+  // A crewed approver decides only the slots no one else can (self-authorisation)
+  const crewIds = ra.mission.crew.map((c) => c.userId);
+  const holders = onCrew && openRoles.length ? await approverHolders() : [];
+  const myRoles = onCrew ? openRoles.filter((r) => (r === 'COMMANDER' || r === 'CO_FLYING_WING') && riskSlotNeedsSelfAuth(holders, crewIds, r as ApproverRoleKey)) : openRoles;
+  const canDecide = ra.status === 'SUBMITTED' && myRoles.length > 0;
 
   return (
     <>
@@ -77,7 +83,10 @@ export default async function RiskDetailPage({ params }: { params: Promise<{ id:
               <div key={a.id} className="border-t border-[#EEF1F5] px-5 py-3 first:border-0">
                 <div className="flex justify-between gap-3">
                   <span className="font-semibold">{APPROVER_ROLE_LABEL[a.approverRole]}</span>
-                  <span className="text-[13px] text-ink-muted">{a.approver ? `${personName(a.approver)}${a.actingFor ? ' (acting Commander)' : ''}` : 'Waiting'}</span>
+                  <span className="text-[13px] text-ink-muted">
+                    {a.approver ? `${personName(a.approver)}${a.actingFor ? ' (acting Commander)' : ''}` : 'Waiting'}
+                    {a.selfAuthorised && <span className="pill-warn ml-2">Self-authorised</span>}
+                  </span>
                 </div>
                 {a.remarks && <p className="mt-1 text-[14px]">{a.remarks}</p>}
               </div>
@@ -89,7 +98,7 @@ export default async function RiskDetailPage({ params }: { params: Promise<{ id:
             <RiskActions
               riskId={ra.id}
               canComment={auth.perms.has('risk.comment')}
-              decide={canDecide ? { roles: myRoles, high: ra.level === 'HIGH', ready: imsafeComplete } : null}
+              decide={canDecide ? { roles: myRoles, high: ra.level === 'HIGH', ready: imsafeComplete, selfAuth: onCrew } : null}
               comments={ra.comments.map((c) => ({ id: c.id, author: personName(c.author), body: c.body, at: formatDateTime(c.createdAt) }))}
             />
           </Card>

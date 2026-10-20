@@ -71,6 +71,10 @@ export function LoginForm({ next }: { next: string }) {
         </a>
         <p className="text-[13px] text-ink-muted">You confirm your email, then Admin activates your account.</p>
       </div>
+      <div className="flex justify-center gap-4 text-[13px]">
+        <a href="/privacy">Privacy policy</a>
+        <a href="/delete-account">Delete your account</a>
+      </div>
     </form>
   );
 }

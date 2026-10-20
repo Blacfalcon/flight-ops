@@ -5,6 +5,9 @@ import { activePilots } from '@/lib/pilots';
 import { localDate, localTime } from '@/lib/time';
 import { PageHeader } from '@/components/ui';
 import { ScheduleBuilder } from '@/components/mission/schedule-builder';
+import { approverHolders } from '@/lib/services/approvers';
+import { getSettings } from '@/lib/settings';
+import type { ApproverRoleKey } from '@/lib/rules/approvals';
 import type { SeatValue } from '@/lib/constants';
 
 export const metadata = { title: 'Edit mission' };
@@ -15,7 +18,7 @@ export default async function EditMissionPage({ params }: { params: Promise<{ id
   const m = await db.mission.findUnique({ where: { id }, include: { crew: true, order: true } });
   if (!m) notFound();
   if (m.category !== 'TRAINING' && !auth.perms.has('mission.createOperational')) notFound();
-  const pilots = await activePilots();
+  const [pilots, approvers, settings] = await Promise.all([activePilots(), approverHolders(), getSettings()]);
   const crew: Partial<Record<SeatValue, string>> = {};
   for (const c of m.crew) crew[c.seat as SeatValue] = c.userId;
   return (
@@ -24,6 +27,8 @@ export default async function EditMissionPage({ params }: { params: Promise<{ id
       <ScheduleBuilder
         canOperational={auth.perms.has('mission.createOperational')}
         pilots={pilots}
+        approvers={approvers}
+        requiredRiskRoles={settings.requiredApprovers as ApproverRoleKey[]}
         initial={{
           id: m.id,
           date: localDate(m.takeoffAt),

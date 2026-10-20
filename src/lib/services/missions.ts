@@ -206,7 +206,7 @@ export async function updateMission(id: string, input: MissionInput, actorId: st
         where: { id: before.order.id },
         data: {
           ...input.order,
-          ...(resubmit ? { status: 'SUBMITTED', submittedAt: new Date(), decidedById: null, decidedAt: null, decisionRemarks: null } : {}),
+          ...(resubmit ? { status: 'SUBMITTED', submittedAt: new Date(), decidedById: null, decidedAt: null, decisionRemarks: null, selfAuthorised: false } : {}),
         },
       });
       if (resubmit) await notifyApprovers(tx, id, mission.missionNo, before.order.orderNo, before.order.status === 'APPROVED');

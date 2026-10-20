@@ -14,6 +14,9 @@ import { ApprovalSummary } from '@/components/approval-card';
 import { ReadinessButtons } from '@/components/mission/readiness-buttons';
 import { CloseOutForm } from '@/components/mission/close-out-form';
 import { CancelMission } from '@/components/mission/cancel-mission';
+import { getSettings } from '@/lib/settings';
+import { approverHolders } from '@/lib/services/approvers';
+import { orderNeedsSelfAuth, selfAuthWarning, type ApproverRoleKey } from '@/lib/rules/approvals';
 
 export default async function MissionPage({ params }: { params: Promise<{ id: string }> }) {
   const auth = await requirePage();
@@ -34,7 +37,11 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
   const needMyImsafe = !!me && ra?.status === 'SUBMITTED' && !ra.imsafe.some((i) => i.userId === me.userId);
 
   const order = m.order;
-  const canDecideOrder = !!order && order.status === 'SUBMITTED' && auth.perms.has('order.approve') && !me;
+  const crewIds = m.crew.map((c) => c.userId);
+  const holders = closed ? [] : await approverHolders();
+  const orderSelfAuth = !!me && !!order && order.status === 'SUBMITTED' && auth.perms.has('order.approve') && orderNeedsSelfAuth(holders, crewIds);
+  const canDecideOrder = !!order && order.status === 'SUBMITTED' && auth.perms.has('order.approve') && (!me || orderSelfAuth);
+  const selfAuthNote = closed ? null : selfAuthWarning(holders, crewIds, (await getSettings()).requiredApprovers as ApproverRoleKey[]);
   const canPublish = auth.perms.has('mission.publish') && m.status === 'DRAFT' && order?.status === 'APPROVED';
   const steps = [
     { label: 'Order approved', done: order?.status === 'APPROVED' },
@@ -79,6 +86,7 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
       </ol>
 
       {m.status === 'CANCELLED' && <div className="alert-bad">Cancelled: {m.cancelReason}</div>}
+      {selfAuthNote && <div className="alert-warn">{selfAuthNote}</div>}
       {m.status === 'AWAITING_ENGINEERING' && <div className="alert-warn">Waiting for CO Engineering to confirm {m.aircraft.registration} serviceable for this date.</div>}
 
       <div className="flex flex-wrap items-start gap-6">
@@ -199,7 +207,8 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
                 </div>
                 {order.decidedBy && order.decidedAt && (
                   <p className="text-[13px] text-ink-muted">
-                    {order.status === 'APPROVED' ? 'Approved' : order.status === 'REJECTED' ? 'Returned' : 'Last decided'} by {personName(order.decidedBy)} · {formatDateTime(order.decidedAt)}
+                    {order.status === 'APPROVED' ? 'Approved' : order.status === 'REJECTED' ? 'Returned' : 'Last decided'} by {personName(order.decidedBy)}
+                    {order.selfAuthorised ? ' (self-authorised)' : ''} · {formatDateTime(order.decidedAt)}
                     {order.decisionRemarks ? ` — “${order.decisionRemarks}”` : ''}
                   </p>
                 )}
@@ -226,7 +235,7 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
                     <span className="font-semibold">{a.fileName}</span>
                   </a>
                 ))}
-                {canDecideOrder && <OrderDecision orderId={order.id} />}
+                {canDecideOrder && <OrderDecision orderId={order.id} selfAuth={orderSelfAuth} />}
                 {canPublish && <PublishOne missionId={m.id} />}
                 {auth.perms.has('mission.publish') && m.status === 'DRAFT' && order.status !== 'APPROVED' && (
                   <p className="text-[13px] text-ink-muted">You can publish once CO Flying Wing or the Commander approves this order.</p>

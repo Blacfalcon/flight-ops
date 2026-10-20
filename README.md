@@ -17,11 +17,13 @@ It runs as a website, installs on Android (with phone notifications), and ships 
 | Readiness clock | A background worker asks the crew for readiness at T-60, flags non-replies at T-45 and reminds the pilot in command at T-30. |
 | Risk assessment | Eight categories rated 1–5 plus an IMSAFE check per crew member. The weather rating is pre-filled from the latest METAR against ICAO minima. |
 | Risk approval | Command approves, approves with remarks or rejects; comments sit alongside. A sortie is Cleared only when every gate is met. |
+| Conflicts of interest | Nobody approves a sortie they are crewed on. If every approver is crewed, one may self-authorise with a compulsory remark; the decision is marked, the Safety Officer is told, and the scheduler is warned in advance. |
 | Weather | METAR and TAF entered by form (the code is composed for you) or pasted, and shown in plain English. |
 | Flight plans and close-out | Crews file plans; Ops approves. After landing the pilot in command records outcome, flight time, fuel (kg / L) and snags, which update aircraft hours. |
 | Reports | Daily, weekly, monthly and quarterly summaries, generated automatically, exported as PDF and Excel by authorised roles. |
 | Notifications | Every item goes to the phone (Web Push / Firebase); only items needing action also go by email, which never carries operational detail. |
 | Offline | Flight-line forms are kept in an on-device outbox and sent when the connection returns. |
+| Privacy | Public privacy policy (`/privacy`) and account deletion in the app or on the web (`/delete-account`), as Google Play and the App Store require. |
 | Security | Admin activation, two-step sign-in (TOTP) for command and admin roles once a day per device, idle sign-out, role-based permissions and an append-only audit log. |
 
 ## Roles
@@ -31,7 +33,8 @@ It runs as a website, installs on Android (with phone notifications), and ships 
 | Commander | Approve mission orders and risk assessments, appoint an acting commander, export reports |
 | Second in command (GOO) | Pilot functions; all Commander functions while appointed acting Commander |
 | CO Flying Wing | Approve mission orders and risk assessments, export reports |
-| CO Engineering | Daily serviceability, aircraft records, close snags |
+| CO Engineering | Daily serviceability confirmation, aircraft records, close snags |
+| Engineering Officer | Aircraft status, hours, inspections and snags (everything except the daily confirmation) |
 | Operations Officer | Schedule and publish sorties, enter weather, approve flight plans, export reports |
 | Training Officer | Schedule training sorties |
 | Safety Officer | Oversee risk (comment only), manage hazard and incident reports, export the safety extract |
@@ -95,6 +98,16 @@ npm run worker:dev            # second terminal: reminders, emails, push, summar
 npm test
 ```
 
+### Demo data
+
+A complete, fictional week (21 people, 15 aircraft, about 47 sorties at every stage, weather) for demonstrations. It only adds records and removes exactly what it added.
+
+```bash
+npx tsx prisma/demo-data.ts add      # prints the demo sign-ins and password (or set DEMO_PASSWORD)
+npx tsx prisma/demo-data.ts metar    # a fresh METAR (valid for one hour)
+npx tsx prisma/demo-data.ts remove
+```
+
 ## Deploy
 
 On a Linux server with Docker and a domain pointing at it:
@@ -108,4 +121,4 @@ Caddy obtains the HTTPS certificate. The database and file storage listen on the
 
 ## Status
 
-Built for a real unit's trial, in use on a test deployment. Planned: public privacy-policy page and an account-deletion request (needed for store review).
+Built for a real unit's trial, in use on a test deployment. Next: Play Store internal testing and TestFlight.

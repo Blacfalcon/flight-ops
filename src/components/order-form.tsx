@@ -5,7 +5,7 @@ import { api } from '@/lib/client/api';
 import { Field, FormError, useSubmit } from './form';
 
 /** CO Flying Wing or the Commander approves or returns a mission order. */
-export function OrderDecision({ orderId }: { orderId: string }) {
+export function OrderDecision({ orderId, selfAuth = false }: { orderId: string; selfAuth?: boolean }) {
   const s = useSubmit();
   const [remarks, setRemarks] = useState('');
 
@@ -16,12 +16,17 @@ export function OrderDecision({ orderId }: { orderId: string }) {
   return (
     <div className="flex flex-col gap-3 rounded-lg border-2 border-brand p-4">
       <FormError error={s.error} />
-      <Field id="order-remarks" label="Remarks" error={s.fields.remarks} hint="Required if you return the order.">
+      {selfAuth && (
+        <div className="alert-warn">
+          You are crewed on this sortie and no other approver is free, so you may self-authorise. A remark is required, the order is marked Self-authorised, and the Safety Officer is told.
+        </div>
+      )}
+      <Field id="order-remarks" label="Remarks" error={s.fields.remarks} hint={selfAuth ? 'Required: self-authorisation.' : 'Required if you return the order.'}>
         <textarea id="order-remarks" rows={2} className="textarea" value={remarks} onChange={(e) => setRemarks(e.target.value)} />
       </Field>
       <div className="flex flex-wrap gap-2">
-        <button className="btn-primary" disabled={s.busy} onClick={() => decide('APPROVE')}>
-          Approve order
+        <button className="btn-primary" disabled={s.busy || (selfAuth && !remarks.trim())} onClick={() => decide('APPROVE')}>
+          {selfAuth ? 'Self-authorise order' : 'Approve order'}
         </button>
         <button className="btn-danger" disabled={s.busy} onClick={() => decide('REJECT')}>
           Return for changes

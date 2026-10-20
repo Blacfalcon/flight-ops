@@ -187,7 +187,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
           <Card title="Safety performance">
             <p>
               Risk assessments: Low <strong>{f.safety.low}</strong>, Medium <strong>{f.safety.medium}</strong>, High <strong>{f.safety.high}</strong>; rejected <strong>{f.safety.rejected}</strong>. Hazard reports <strong>{f.safety.hazards}</strong>, incident reports{' '}
-              <strong>{f.safety.incidents}</strong>.
+              <strong>{f.safety.incidents}</strong>. Sorties self-authorised by a crewed approver <strong>{f.safety.selfAuthorised ?? 0}</strong>.
             </p>
           </Card>
         </div>

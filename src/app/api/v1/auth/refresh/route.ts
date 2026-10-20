@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { REFRESH_COOKIE } from '@/lib/auth/jwt';
 import { clearAuthCookies, refreshSession, writeAuthCookies } from '@/lib/auth/session';
+import { publicUrl } from '@/lib/public-url';
 
 // POST: called by the app's fetch helper when an API call returns 401.
 export async function POST(req: NextRequest) {
@@ -21,11 +22,11 @@ export async function GET(req: NextRequest) {
   const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/';
   const r = await refreshSession(req.cookies.get(REFRESH_COOKIE)?.value);
   if (!r) {
-    const res = NextResponse.redirect(new URL(`/login?next=${encodeURIComponent(safeNext)}`, req.url));
+    const res = NextResponse.redirect(publicUrl(`/login?next=${encodeURIComponent(safeNext)}`, req));
     clearAuthCookies(res.cookies);
     return res;
   }
-  const res = NextResponse.redirect(new URL(safeNext, req.url));
+  const res = NextResponse.redirect(publicUrl(safeNext, req));
   writeAuthCookies(res.cookies, r.accessToken, r.refreshToken);
   return res;
 }

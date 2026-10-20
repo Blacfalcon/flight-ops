@@ -22,7 +22,7 @@ export default async function DashboardPage() {
       main = <CommandDashboard title={auth.actingCommander ? 'Commander’s dashboard (acting)' : auth.user.appointment === 'CO_FLYING_WING' ? 'CO Flying Wing' : 'Commander’s dashboard'} />;
       break;
     case 'engineering':
-      main = <EngineeringDashboard />;
+      main = <EngineeringDashboard canConfirm={auth.perms.has('serviceability.confirm')} />;
       break;
     case 'ops':
       main = <OpsDashboard canWeather={auth.perms.has('weather.update')} />;

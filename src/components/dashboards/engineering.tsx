@@ -4,7 +4,7 @@ import { formatLongDate, formatShortDate } from '@/lib/time';
 import { personName } from '@/lib/constants';
 import { formatHours } from '@/lib/hours';
 
-export async function EngineeringDashboard() {
+export async function EngineeringDashboard({ canConfirm = true }: { canConfirm?: boolean }) {
   const d = await engineeringDashboard();
   const serviceable = d.aircraft.filter((a) => a.status === 'SERVICEABLE').length;
   const down = d.aircraft.filter((a) => a.status === 'UNSERVICEABLE' || a.status === 'UNDER_MAINTENANCE').length;
@@ -14,7 +14,7 @@ export async function EngineeringDashboard() {
   return (
     <>
       <div className="flex flex-col gap-1">
-        <h1>Engineering</h1>
+        <h1>{canConfirm ? 'Engineering' : 'Engineering (Engineering Officer)'}</h1>
         <div className="text-ink-muted">{formatLongDate(d.today)}</div>
       </div>
 
@@ -22,10 +22,13 @@ export async function EngineeringDashboard() {
         <div className="alert-info flex flex-wrap items-center justify-between gap-3">
           <span>
             {!todayDone ? 'Today’s serviceability is not fully confirmed.' : 'Tomorrow’s serviceability is not confirmed yet.'} Ops cannot publish missions on unconfirmed aircraft.
+            {!canConfirm && ' CO Engineering makes the daily confirmation; keep aircraft status, hours and snags up to date so it is ready.'}
           </span>
-          <a href={`/engineering/serviceability?date=${todayDone ? d.tomorrow : d.today}`} className="btn-primary btn-sm">
-            Confirm now
-          </a>
+          {canConfirm && (
+            <a href={`/engineering/serviceability?date=${todayDone ? d.tomorrow : d.today}`} className="btn-primary btn-sm">
+              Confirm now
+            </a>
+          )}
         </div>
       )}
 

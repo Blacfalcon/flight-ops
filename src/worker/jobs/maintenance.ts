@@ -11,7 +11,7 @@ export async function inspectionCheck() {
   const today = localDate();
   const horizon = dateOnly(addDays(today, s.inspectionWarning.days));
   const aircraft = await db.aircraft.findMany({ where: { active: true } });
-  const recipients = await usersWithAppointments(['CO_ENGINEERING', 'OPERATIONS_OFFICER']);
+  const recipients = await usersWithAppointments(['CO_ENGINEERING', 'ENGINEERING_OFFICER', 'OPERATIONS_OFFICER']);
 
   for (const a of aircraft) {
     const hrs = Number(a.hoursToNextInspection);

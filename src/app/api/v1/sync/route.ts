@@ -67,7 +67,7 @@ async function run(op: Op, auth: AuthContext): Promise<unknown> {
     case 'snag.raise': {
       const b = snagSchema.parse(op.payload);
       const s = await db.snag.create({ data: { aircraftId: b.aircraftId, description: b.description, raisedById: auth.user.id } });
-      await notify(await usersWithAppointments(['CO_ENGINEERING']), { kind: 'snag.raised', title: 'A snag has been raised', link: '/engineering/snags', email: true });
+      await notify(await usersWithAppointments(['CO_ENGINEERING', 'ENGINEERING_OFFICER']), { kind: 'snag.raised', title: 'A snag has been raised', link: '/engineering/snags', email: true });
       await audit(auth.user.id, 'snag.raise', 'snag', s.id, { after: s });
       return { id: s.id };
     }

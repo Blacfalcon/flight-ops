@@ -17,7 +17,7 @@ export const GET = route({ perm: 'snag.view' }, async ({ query }) => {
 
 export const POST = route({ perm: ['snag.raise', 'snag.close'], schema: snagSchema }, async ({ auth, body }) => {
   const snag = await db.snag.create({ data: { aircraftId: body.aircraftId, description: body.description, raisedById: auth.user.id }, include: { aircraft: true } });
-  await notify(await usersWithAppointments(['CO_ENGINEERING']), { kind: 'snag.raised', title: `Snag raised on ${snag.aircraft.registration}`, link: '/engineering/snags', email: true });
+  await notify(await usersWithAppointments(['CO_ENGINEERING', 'ENGINEERING_OFFICER']), { kind: 'snag.raised', title: `Snag raised on ${snag.aircraft.registration}`, link: '/engineering/snags', email: true });
   await audit(auth.user.id, 'snag.raise', 'snag', snag.id, { after: snag });
   return snag;
 });

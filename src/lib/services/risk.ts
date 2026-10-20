@@ -8,6 +8,8 @@ import { computeRisk, validRatings, weatherRatingFrom, type Imsafe, type Ratings
 import { pilotInCommandSeat } from '../rules/pairing';
 import { localTime } from '../time';
 import { expiresAt, isExpired } from '../weather/validity';
+import { approverHolders } from './approvers';
+import { riskSlotNeedsSelfAuth, type ApproverRoleKey } from '../rules/approvals';
 
 type Tx = Prisma.TransactionClient;
 
@@ -174,14 +176,20 @@ export async function decideRisk(args: {
     const slot = ra.approvals.find((a) => a.approverRole === args.role);
     if (!slot) throw forbidden('That role is not a required approver for this assessment.');
     if (slot.decision) throw conflict('This role has already decided.');
-    if (ra.mission.crew.some((c) => c.userId === args.userId)) throw forbidden('You cannot approve a mission you are crewed on.');
+    // Crewed approvers may decide only when no one else holding this role is free (self-authorisation)
+    const crewIds = ra.mission.crew.map((c) => c.userId);
+    const self = crewIds.includes(args.userId);
+    if (self) {
+      const ok = (args.role === 'COMMANDER' || args.role === 'CO_FLYING_WING') && riskSlotNeedsSelfAuth(await approverHolders(tx), crewIds, args.role as ApproverRoleKey);
+      if (!ok) throw forbidden('You are crewed on this sortie and another approver for this role is available. They should decide it.');
+    }
 
     const missingImsafe = ra.mission.crew.filter((c) => !ra.imsafe.some((i) => i.userId === c.userId));
     if (missingImsafe.length) throw new ApiError(409, 'imsafe_incomplete', 'Wait until every crew member has completed IMSAFE.');
 
-    const needsRemarks = args.decision !== 'APPROVE' || ra.level === 'HIGH';
+    const needsRemarks = args.decision !== 'APPROVE' || ra.level === 'HIGH' || self;
     if (needsRemarks && !args.remarks?.trim()) {
-      throw invalid(ra.level === 'HIGH' ? 'High-risk assessments need remarks from every approver.' : 'Remarks are required for this decision.', { remarks: 'Required.' });
+      throw invalid(self ? 'Self-authorisation needs a remark.' : ra.level === 'HIGH' ? 'High-risk assessments need remarks from every approver.' : 'Remarks are required for this decision.', { remarks: 'Required.' });
     }
 
     await tx.riskApproval.update({
@@ -192,10 +200,14 @@ export async function decideRisk(args: {
         remarks: args.remarks?.trim() || null,
         decidedAt: new Date(),
         actingFor: args.role === 'COMMANDER' && args.appointment === 'GOO',
+        selfAuthorised: self,
       },
     });
+    if (self) {
+      const safety = await usersWithAppointments(['SAFETY_OFFICER'], tx);
+      await notify(safety, { kind: 'risk.selfAuthorised', title: `${ra.mission.missionNo}: risk assessment decided by a crewed approver (self-authorised)`, link: `/risk/${ra.id}`, email: true }, tx);
+    }
 
-    const crewIds = ra.mission.crew.map((c) => c.userId);
     const ops = await usersWithAppointments(['OPERATIONS_OFFICER'], tx);
     let outcome: 'pending' | 'cleared' | 'rejected' = 'pending';
 
@@ -215,7 +227,7 @@ export async function decideRisk(args: {
         await notify(crewIds, { kind: 'risk.decision', title: `${ra.mission.missionNo}: ${args.role.replace(/_/g, ' ').toLowerCase()} decided` , link: `/missions/${ra.missionId}` }, tx);
       }
     }
-    await audit(args.userId, `risk.${args.decision.toLowerCase()}`, 'risk_assessment', ra.id, { after: { role: args.role, remarks: args.remarks } }, tx);
+    await audit(args.userId, self ? `risk.selfAuthorise.${args.decision.toLowerCase()}` : `risk.${args.decision.toLowerCase()}`, 'risk_assessment', ra.id, { after: { role: args.role, remarks: args.remarks, selfAuthorised: self } }, tx);
     return { outcome };
   });
 }

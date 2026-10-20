@@ -21,7 +21,7 @@ export function RiskActions({
   riskId: string;
   comments: Comment[];
   canComment: boolean;
-  decide: { roles: Role[]; high: boolean; ready: boolean } | null;
+  decide: { roles: Role[]; high: boolean; ready: boolean; selfAuth?: boolean } | null;
 }) {
   const s = useSubmit();
   const [text, setText] = useState('');
@@ -69,7 +69,7 @@ export function RiskActions({
           <div>
             <label htmlFor="risk-text" className="label">
               {decide ? 'Comment or remarks' : 'Add a comment'}
-              {decide && <span className="font-normal text-ink-muted">{decide.high ? ' (remarks required: High risk)' : ' (required to reject or approve with remarks)'}</span>}
+              {decide && <span className="font-normal text-ink-muted">{decide.selfAuth ? ' (required: self-authorisation)' : decide.high ? ' (remarks required: High risk)' : ' (required to reject or approve with remarks)'}</span>}
             </label>
             <textarea id="risk-text" rows={3} className="textarea" value={text} onChange={(e) => setText(e.target.value)} />
             {s.fields.remarks && <p className="field-error">{s.fields.remarks}</p>}
@@ -83,7 +83,7 @@ export function RiskActions({
               </button>
             )}
             {decide && (
-              <button className="btn-primary flex-1" disabled={!canDecideNow || s.busy || (decide.high && empty)} onClick={() => decision('APPROVE')}>
+              <button className="btn-primary flex-1" disabled={!canDecideNow || s.busy || ((decide.high || !!decide.selfAuth) && empty)} onClick={() => decision('APPROVE')}>
                 Approve
               </button>
             )}
@@ -96,6 +96,11 @@ export function RiskActions({
               <button className="btn-danger flex-1" disabled={!canDecideNow || s.busy || empty} onClick={() => decision('REJECT')}>
                 Reject
               </button>
+            </div>
+          )}
+          {decide?.selfAuth && (
+            <div className="alert-warn">
+              You are crewed on this sortie and no other approver for this role is free, so you may self-authorise. Your remark is required, the decision is marked Self-authorised, and the Safety Officer is told.
             </div>
           )}
           {decide && !decide.ready && <div className="alert-warn">Waiting for every crew member’s IMSAFE check before a decision can be made.</div>}

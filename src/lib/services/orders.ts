@@ -3,6 +3,8 @@ import { db } from '../db';
 import { conflict, forbidden, invalid, notFound } from '../api-errors';
 import { audit } from '../audit';
 import { notify, usersWithAppointments } from '../notify';
+import { approverHolders } from './approvers';
+import { orderNeedsSelfAuth } from '../rules/approvals';
 
 // Every sortie has a mission order. It is raised together with the schedule entry, approved by
 // CO Flying Wing or the Commander (either one), and only then can the Ops Officer publish the sortie.
@@ -53,14 +55,26 @@ export async function decideOrder(args: { orderId: string; userId: string; decis
     const o = await tx.missionOrder.findUnique({ where: { id: args.orderId }, include: { mission: { include: { crew: true } } } });
     if (!o) throw notFound('Mission order');
     if (o.status !== 'SUBMITTED') throw conflict('This mission order is not awaiting approval.');
-    if (o.mission.crew.some((c) => c.userId === args.userId)) throw forbidden('You cannot approve a mission you are crewed on.');
+    // Crewed approvers may decide only when no other approver is free (self-authorisation)
+    const crewIds = o.mission.crew.map((c) => c.userId);
+    const self = crewIds.includes(args.userId);
+    if (self) {
+      if (!orderNeedsSelfAuth(await approverHolders(tx), crewIds)) {
+        throw forbidden('You are crewed on this sortie and another approver who is not crewed is available. They should decide it.');
+      }
+      if (!args.remarks?.trim()) throw invalid('Self-authorisation needs a remark.', { remarks: 'Required when you decide a sortie you are crewed on.' });
+    }
     if (args.decision === 'REJECT' && !args.remarks?.trim()) throw invalid('Say what needs to change.', { remarks: 'Required when returning an order.' });
 
     const status = args.decision === 'APPROVE' ? 'APPROVED' : 'REJECTED';
     const after = await tx.missionOrder.update({
       where: { id: o.id },
-      data: { status, decidedById: args.userId, decidedAt: new Date(), decisionRemarks: args.remarks?.trim() || null },
+      data: { status, decidedById: args.userId, decidedAt: new Date(), decisionRemarks: args.remarks?.trim() || null, selfAuthorised: self && status === 'APPROVED' },
     });
+    if (self && status === 'APPROVED') {
+      const safety = await usersWithAppointments(['SAFETY_OFFICER'], tx);
+      await notify(safety, { kind: 'order.selfAuthorised', title: `${o.orderNo} (${o.mission.missionNo}) self-authorised by a crewed approver`, link: `/missions/${o.missionId}`, email: true }, tx);
+    }
     const staff = await usersWithAppointments(['OPERATIONS_OFFICER', 'TRAINING_OFFICER'], tx);
     await notify(
       [...staff, o.createdById],
@@ -76,7 +90,7 @@ export async function decideOrder(args: { orderId: string; userId: string; decis
     if (status === 'APPROVED' && o.mission.publishedAt) {
       await notify(o.mission.crew.map((c) => c.userId), { kind: 'order.updated', title: `Mission order ${o.orderNo} updated`, link: `/missions/${o.missionId}`, email: true }, tx);
     }
-    await audit(args.userId, `order.${args.decision.toLowerCase()}`, 'mission_order', o.id, { before: { status: o.status }, after: { status, remarks: args.remarks } }, tx);
+    await audit(args.userId, self ? `order.selfAuthorise.${args.decision.toLowerCase()}` : `order.${args.decision.toLowerCase()}`, 'mission_order', o.id, { before: { status: o.status }, after: { status, remarks: args.remarks, selfAuthorised: self } }, tx);
     return after;
   });
 }
