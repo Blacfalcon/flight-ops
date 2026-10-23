@@ -73,6 +73,7 @@ export function LoginForm({ next }: { next: string }) {
       </div>
       <div className="flex justify-center gap-4 text-[13px]">
         <a href="/privacy">Privacy policy</a>
+        <a href="/terms">Conditions of use</a>
         <a href="/delete-account">Delete your account</a>
       </div>
     </form>

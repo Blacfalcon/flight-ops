@@ -1,7 +1,7 @@
 import { Logo } from '@/components/logo';
 import { getBranding } from '@/lib/branding';
 
-// Public pages that must open without signing in (privacy policy, account deletion).
+// Public pages that must open without signing in (privacy policy, conditions of use, account deletion).
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const b = await getBranding();
   return (
@@ -18,6 +18,7 @@ export default async function PublicLayout({ children }: { children: React.React
       <main className="mx-auto max-w-3xl px-6 py-8">{children}</main>
       <footer className="mx-auto flex max-w-3xl flex-wrap gap-4 px-6 pb-8 text-[13px] text-ink-muted">
         <a href="/privacy">Privacy policy</a>
+        <a href="/terms">Conditions of use</a>
         <a href="/delete-account">Delete your account</a>
         <a href="/login">Sign in</a>
       </footer>

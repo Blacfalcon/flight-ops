@@ -1,8 +1,13 @@
 import type { Metadata, Viewport } from 'next';
+import { IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google';
 import './globals.css';
 import { PwaRegister } from '@/components/pwa-register';
 import { Watermark } from '@/components/logo';
 import { getBranding } from '@/lib/branding';
+
+// Fonts are downloaded at build time and served from this site, so no request goes to Google.
+const plexSans = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-plex-sans', display: 'swap' });
+const plexMono = IBM_Plex_Mono({ subsets: ['latin'], weight: ['500'], variable: '--font-plex-mono', display: 'swap' });
 
 // Unit name and images come from Settings, so pages are rendered per request.
 export const dynamic = 'force-dynamic';
@@ -28,15 +33,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const b = await getBranding();
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-        />
-      </head>
+    <html lang="en" className={`${plexSans.variable} ${plexMono.variable}`}>
       <body>
         {children}
         <Watermark version={b.watermarkVersion} />

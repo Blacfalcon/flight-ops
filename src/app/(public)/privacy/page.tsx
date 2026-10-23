@@ -3,7 +3,7 @@ import { privacyContact } from '@/lib/privacy';
 
 export const metadata = { title: 'Privacy policy' };
 
-const UPDATED = '19 October 2026';
+const UPDATED = '23 October 2026';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -57,6 +57,18 @@ export default async function PrivacyPage() {
           <p>The app does not use advertising, does not track you across other apps or websites, and does not collect your location.</p>
         </Section>
 
+        <Section title="Cookies and storage on your device">
+          <p>The app only uses what it needs to work. There are no advertising, analytics or tracking cookies, so there is nothing to opt out of.</p>
+          <ul className="list-disc pl-6">
+            <li>
+              <strong>Sign-in cookies:</strong> one keeps you signed in for 15 minutes at a time, one renews that for up to 7 days, and one remembers for the day that you completed two-step sign-in. They cannot be read by page scripts and are never sent to other sites.
+            </li>
+            <li>
+              <strong>Offline storage:</strong> the app keeps a copy of your own schedule and any changes made while offline on your device, so it works with a poor signal. It is cleared when you sign out.
+            </li>
+          </ul>
+        </Section>
+
         <Section title="Why we use it">
           <p>
             Only to run flying operations safely: to know who is crewed and ready, to route approvals to the right appointment, to keep aircraft hours and inspections correct, to send you alerts about your duties, and to produce summaries for the chain of command. Your data is never sold.
@@ -103,7 +115,7 @@ export default async function PrivacyPage() {
         </Section>
 
         <Section title="Changes to this policy">
-          <p>If this policy changes, the new version is posted here with a new date.</p>
+          <p>If this policy changes, the new version is posted here with a new date. See also the <a href="/terms">conditions of use</a>.</p>
         </Section>
       </div>
     </div>

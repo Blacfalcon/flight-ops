@@ -3,7 +3,7 @@ import { ACCESS_COOKIE, REFRESH_COOKIE, verifyAccessToken } from '@/lib/auth/jwt
 import { publicUrl } from '@/lib/public-url';
 
 // Page protection. API routes check sign-in themselves (they return 401 rather than redirecting).
-const PUBLIC = ['/login', '/register', '/verify-email', '/forgot-password', '/reset-password', '/offline', '/privacy', '/delete-account'];
+const PUBLIC = ['/login', '/register', '/verify-email', '/forgot-password', '/reset-password', '/offline', '/privacy', '/terms', '/delete-account'];
 
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;

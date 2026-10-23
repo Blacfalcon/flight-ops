@@ -55,13 +55,16 @@
     @apply mb-1.5 block text-[13px] font-semibold;
   }
   .input {
-    @apply h-11 w-full rounded-lg border border-[#C9D3E0] bg-white px-3 text-[14px] text-ink placeholder:text-ink-muted/70;
+    @apply h-11 w-full rounded-lg border border-[#7D8CA3] bg-white px-3 text-[14px] text-ink placeholder:text-ink-muted/70;
+  }
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:font-semibold focus:text-brand focus:shadow-lg;
   }
   .input-error {
     @apply border-2 border-bad-solid;
   }
   .textarea {
-    @apply w-full rounded-lg border border-[#C9D3E0] bg-white px-3 py-2.5 text-[14px] text-ink;
+    @apply w-full rounded-lg border border-[#7D8CA3] bg-white px-3 py-2.5 text-[14px] text-ink;
   }
   .field-error {
     @apply mt-1 text-[13px] font-medium text-bad-fg;

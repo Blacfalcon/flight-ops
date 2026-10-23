@@ -15,8 +15,8 @@ const config: Config = {
         bad: { bg: '#FBE7E6', fg: '#A1231B', solid: '#B42318' },
       },
       fontFamily: {
-        sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
-        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+        sans: ['var(--font-plex-sans)', '"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-plex-mono)', '"IBM Plex Mono"', 'ui-monospace', 'monospace'],
       },
     },
   },

@@ -28,18 +28,28 @@ function fromHeader(mailFrom: string, unit: string): string {
   return `"${unit.replace(/"/g, '')} Ops" <${address}>`;
 }
 
-function layout(unit: string, title: string, body: string, action?: { label: string; url: string }) {
+/** Escape text placed into email HTML. The unit name and wording still show exactly as typed. */
+function esc(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function layout(rawUnit: string, rawTitle: string, rawBody: string, action?: { label: string; url: string }) {
+  const unit = esc(rawUnit);
+  const title = esc(rawTitle);
+  const body = esc(rawBody);
+  const manageUrl = `${env.appUrl}/me`;
   const button = action
-    ? `<p style="margin:24px 0"><a href="${action.url}" style="background:#1F5FD1;color:#ffffff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600">${action.label}</a></p>`
+    ? `<p style="margin:24px 0"><a href="${esc(action.url)}" style="background:#1F5FD1;color:#ffffff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600">${esc(action.label)}</a></p>`
     : '';
   const html = `<!doctype html><html><body style="margin:0;background:#F3F6FA;font-family:Arial,sans-serif;color:#0F1B2D">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" style="max-width:520px;background:#ffffff;border:1px solid #DCE3EC;border-radius:12px">
 <tr><td style="background:#0B1F3A;color:#ffffff;padding:18px 24px;border-radius:12px 12px 0 0;font-weight:700">${unit} Flight Ops</td></tr>
 <tr><td style="padding:24px"><h1 style="font-size:18px;margin:0 0 12px">${title}</h1><p style="margin:0;line-height:1.5">${body}</p>${button}
-<p style="margin:24px 0 0;color:#4A5A70;font-size:12px">This message contains no operational detail. Sign in to view it.</p></td></tr>
+<p style="margin:24px 0 0;color:#4A5A70;font-size:12px">This message contains no operational detail. Sign in to view it.</p>
+<p style="margin:8px 0 0;color:#4A5A70;font-size:12px"><a href="${esc(manageUrl)}" style="color:#1F4FB0">Change which emails you get</a> on My profile.</p></td></tr>
 </table></td></tr></table></body></html>`;
-  const text = `${title}\n\n${body}${action ? `\n\n${action.label}: ${action.url}` : ''}\n\nThis message contains no operational detail. Sign in to view it.`;
+  const text = `${rawTitle}\n\n${rawBody}${action ? `\n\n${action.label}: ${action.url}` : ''}\n\nThis message contains no operational detail. Sign in to view it.\nChange which emails you get: ${manageUrl}`;
   return { html, text };
 }
 

@@ -14,7 +14,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
           </div>
         </div>
       </header>
-      <main className="flex flex-1 items-start justify-center px-6 py-8 lg:items-center">
+      <main id="main" className="flex flex-1 items-start justify-center px-6 py-8 lg:items-center">
         <div className="w-full max-w-md">{children}</div>
       </main>
       <footer className="px-6 pb-6 text-center text-[12px] text-ink-muted lg:hidden">Authorised personnel only. All activity is logged.</footer>

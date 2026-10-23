@@ -10,6 +10,24 @@ const securityHeaders = [
   { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
 ];
 
+// Content Security Policy: only this site's own scripts, styles, fonts and connections. Production only,
+// because the development server needs eval for hot reload.
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  "connect-src 'self'",
+  "worker-src 'self'",
+  "manifest-src 'self'",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');
+if (process.env.NODE_ENV === 'production') securityHeaders.push({ key: 'Content-Security-Policy', value: csp });
+
 const nextConfig = {
   poweredByHeader: false,
   // This folder is the project root (silences the "multiple lockfiles" warning)

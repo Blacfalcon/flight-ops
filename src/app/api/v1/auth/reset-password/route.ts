@@ -1,12 +1,15 @@
 import { db } from '@/lib/db';
-import { ApiError, invalid, publicRoute } from '@/lib/api';
+import { ApiError, clientIp, invalid, publicRoute } from '@/lib/api';
+import { rateLimit } from '@/lib/rate-limit';
 import { resetSchema } from '@/lib/validators';
 import { hashToken } from '@/lib/crypto';
 import { hashPassword, passwordProblem } from '@/lib/auth/password';
 import { revokeAllSessions } from '@/lib/auth/session';
 import { audit } from '@/lib/audit';
 
-export const POST = publicRoute(resetSchema, async ({ token, password }) => {
+export const POST = publicRoute(resetSchema, async ({ token, password }, req) => {
+  const limit = rateLimit(`reset:${clientIp(req)}`, 10, 15 * 60_000);
+  if (!limit.ok) throw new ApiError(429, 'rate_limited', `Too many attempts. Try again in ${limit.retryAfterSec} seconds.`);
   const weak = passwordProblem(password);
   if (weak) throw invalid(weak, { password: weak });
   const row = await db.authToken.findUnique({ where: { tokenHash: hashToken(token) } });

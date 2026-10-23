@@ -39,10 +39,14 @@ export default function RegisterPage() {
       s.setError('The two passwords do not match.');
       return;
     }
-    const { confirm, ...body } = f;
+    const { confirm, accept, ...body } = f;
     void confirm;
+    if (accept !== 'on') {
+      s.setError('Tick the box to accept the privacy policy and conditions of use.');
+      return;
+    }
     const res = await s.run(() =>
-      api('auth/register', { body: { ...body, pilotCategory: body.flightStatus === 'NONE' ? 'NIL' : body.pilotCategory, ...(photo ? { photo } : {}) } }),
+      api('auth/register', { body: { ...body, pilotCategory: body.flightStatus === 'NONE' ? 'NIL' : body.pilotCategory, accept: true, ...(photo ? { photo } : {}) } }),
     );
     if (res) setDone(String(f.email));
   }
@@ -144,6 +148,19 @@ export default function RegisterPage() {
       <Field id="confirm" label="Confirm password">
         <input id="confirm" name="confirm" type="password" autoComplete="new-password" className="input" required />
       </Field>
+      <div className="flex flex-col gap-1">
+        <label htmlFor="accept" className="flex items-start gap-3 text-[14px]">
+          <input id="accept" name="accept" type="checkbox" required className="mt-0.5 h-5 w-5 shrink-0" aria-describedby={err.accept ? 'accept-error' : undefined} />
+          <span>
+            I have read the <a href="/privacy" target="_blank" rel="noopener">privacy policy</a> and <a href="/terms" target="_blank" rel="noopener">conditions of use</a>, and I am 18 or over.
+          </span>
+        </label>
+        {err.accept && (
+          <p id="accept-error" className="text-[13px] font-semibold text-bad-fg">
+            {err.accept}
+          </p>
+        )}
+      </div>
       <button className="btn-primary h-12" disabled={s.busy}>
         {s.busy ? 'Creating…' : 'Create account'}
       </button>

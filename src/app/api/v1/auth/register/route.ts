@@ -21,7 +21,8 @@ export const POST = publicRoute(registerSchema, async (body, req) => {
     throw new ApiError(409, 'duplicate', 'An account with these details already exists.', { [field]: 'Already registered.' });
   }
 
-  const { password, photo, ...rest } = body;
+  const { password, photo, accept, ...rest } = body;
+  void accept; // checked by the schema; not stored
   const img = photo ? decodeImage(photo, 250_000, 'photo') : null;
   const user = await db.user.create({
     data: {
