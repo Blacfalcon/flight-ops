@@ -2,13 +2,13 @@ import { requirePage } from '@/lib/auth/guard';
 import { AircraftForm } from '@/components/aircraft-form';
 import { Card, PageHeader } from '@/components/ui';
 
-export const metadata = { title: 'Add aircraft' };
+export const metadata = { title: 'Add Aircraft' };
 
 export default async function NewAircraftPage() {
   await requirePage('aircraft.create');
   return (
     <>
-      <PageHeader title="Add aircraft" back={{ href: '/aircraft', label: 'Aircraft' }} />
+      <PageHeader title="Add Aircraft" back={{ href: '/aircraft', label: 'Aircraft' }} />
       <Card>
         <AircraftForm
           canRetire={false}

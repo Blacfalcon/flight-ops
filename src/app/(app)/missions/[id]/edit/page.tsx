@@ -10,7 +10,7 @@ import { getSettings } from '@/lib/settings';
 import type { ApproverRoleKey } from '@/lib/rules/approvals';
 import type { SeatValue } from '@/lib/constants';
 
-export const metadata = { title: 'Edit mission' };
+export const metadata = { title: 'Edit Mission' };
 
 export default async function EditMissionPage({ params }: { params: Promise<{ id: string }> }) {
   const auth = await requirePage('mission.createTraining');

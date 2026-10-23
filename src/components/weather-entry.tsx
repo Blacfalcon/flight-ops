@@ -219,7 +219,7 @@ export function WeatherEntry({ station }: { station: string }) {
         <div className="flex flex-col gap-2 rounded-lg bg-ground px-4 py-3">
           <div className="text-[13px] font-semibold">Code</div>
           <code className="block rounded-lg bg-navy px-3 py-2.5 font-mono text-[12px] leading-relaxed text-navy-text">{code}</code>
-          <div className="text-[13px] font-semibold">In plain English</div>
+          <div className="text-[13px] font-semibold">In Plain English</div>
           <ul className="ml-5 list-disc text-[14px] leading-relaxed">
             {preview.lines.map((l, i) => (
               <li key={i}>{l}.</li>

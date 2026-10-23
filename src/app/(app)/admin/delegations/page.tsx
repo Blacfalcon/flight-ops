@@ -24,7 +24,7 @@ export default async function DelegationsPage() {
   return (
     <>
       <PageHeader title="Acting Commander" sub="While appointed, the GOO has every Commander right, including risk approvals. Outside the period the GOO has pilot rights only." />
-      <Card title="Appoint the GOO as acting Commander">
+      <Card title="Appoint the GOO as Acting Commander">
         {goos.length === 0 || fromChoices.length === 0 ? (
           <Empty>There must be an active Commander and an active GOO account first.</Empty>
         ) : (

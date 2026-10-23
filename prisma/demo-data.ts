@@ -24,6 +24,7 @@ import { hash } from '@node-rs/argon2';
 import { computeRisk, type Imsafe, type Ratings } from '../src/lib/rules/risk';
 import { pilotInCommandSeat, validateCrew, type CrewMember } from '../src/lib/rules/pairing';
 import { parseWeather } from '../src/lib/weather/metar';
+import { splitName } from '../src/lib/names';
 import { addDays, dateOnly, localDate, localToUtc } from '../src/lib/time';
 import { MISSION_CATEGORY_PREFIX } from '../src/lib/constants';
 
@@ -426,6 +427,7 @@ export function buildPlan(now: Date, settings: DemoSettings, nextNumber: (prefix
     id: uid(p.key),
     rank: p.rank,
     fullName: p.name,
+    ...splitName(p.name),
     nafNumber: personNaf(i),
     email: personEmail(p),
     phone: personPhone(i),

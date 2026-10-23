@@ -10,7 +10,7 @@ import { RiskActions } from '@/components/risk/risk-actions';
 import { approverHolders } from '@/lib/services/approvers';
 import { riskSlotNeedsSelfAuth, type ApproverRoleKey } from '@/lib/rules/approvals';
 
-export const metadata = { title: 'Risk assessment' };
+export const metadata = { title: 'Risk Assessment' };
 
 export default async function RiskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const auth = await requirePage();
@@ -31,7 +31,7 @@ export default async function RiskDetailPage({ params }: { params: Promise<{ id:
   return (
     <>
       <PageHeader
-        back={{ href: '/risk', label: 'Risk approvals' }}
+        back={{ href: '/risk', label: 'Risk Approvals' }}
         title={`${ra.mission.missionNo} · risk assessment v${ra.version}`}
         sub={`Submitted by ${personName(ra.submittedBy)} · ${formatDateTime(ra.createdAt)}`}
         actions={<a href={`/missions/${ra.mission.id}`} className="btn-secondary btn-sm">Open mission</a>}

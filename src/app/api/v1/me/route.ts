@@ -23,9 +23,9 @@ const ALLOWED: Record<string, readonly string[]> = {
 // Phone and name change directly. Rank, appointment, flight status and pilot category need Admin approval.
 export const PATCH = route({ schema: meUpdateSchema }, async ({ auth, body }) => {
   const me = auth.user;
-  if (body.phone || body.fullName) {
-    const after = await db.user.update({ where: { id: me.id }, data: { phone: body.phone, fullName: body.fullName } });
-    await audit(me.id, 'user.updateSelf', 'user', me.id, { before: { phone: me.phone, fullName: me.fullName }, after: { phone: after.phone, fullName: after.fullName } });
+  if (body.phone) {
+    const after = await db.user.update({ where: { id: me.id }, data: { phone: body.phone } });
+    await audit(me.id, 'user.updateSelf', 'user', me.id, { before: { phone: me.phone }, after: { phone: after.phone } });
   }
   if (body.emailAlerts && body.emailAlerts !== me.emailAlerts) {
     await db.user.update({ where: { id: me.id }, data: { emailAlerts: body.emailAlerts }, select: { id: true } });

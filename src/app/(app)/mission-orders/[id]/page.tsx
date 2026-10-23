@@ -10,7 +10,7 @@ import { Card, DefinitionGrid, PageHeader } from '@/components/ui';
 import { approverHolders } from '@/lib/services/approvers';
 import { orderNeedsSelfAuth } from '@/lib/rules/approvals';
 
-export const metadata = { title: 'Mission order' };
+export const metadata = { title: 'Mission Order' };
 
 export default async function OrderPage({ params }: { params: Promise<{ id: string }> }) {
   const auth = await requirePage();
@@ -39,7 +39,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
     <>
       <PageHeader
         title={o.orderNo}
-        back={{ href: '/mission-orders', label: 'Mission orders' }}
+        back={{ href: '/mission-orders', label: 'Mission Orders' }}
         sub={`For ${o.mission.missionNo} · ${MISSION_CATEGORY_LABEL[o.mission.category]} · ${missionTypeLabel(o.mission.type)} · ${o.mission.name}`}
         actions={
           <>

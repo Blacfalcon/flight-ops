@@ -8,7 +8,9 @@ import { Field, FormError, FormNotice, useSubmit } from './form';
 type U = {
   id: string;
   rank: string;
-  fullName: string;
+  firstName: string;
+  middleName: string | null;
+  surname: string;
   nafNumber: string;
   email: string;
   phone: string;
@@ -45,8 +47,14 @@ export function UserAdminForm({ user }: { user: U }) {
               ))}
             </select>
           </Field>
-          <Field id="fullName" label="Full name" error={s.fields.fullName}>
-            <input id="fullName" name="fullName" className="input" defaultValue={user.fullName} required />
+          <Field id="firstName" label="First name" error={s.fields.firstName}>
+            <input id="firstName" name="firstName" className="input" defaultValue={user.firstName} required />
+          </Field>
+          <Field id="middleName" label="Middle name (optional)" error={s.fields.middleName}>
+            <input id="middleName" name="middleName" className="input" defaultValue={user.middleName ?? ''} />
+          </Field>
+          <Field id="surname" label="Surname" error={s.fields.surname}>
+            <input id="surname" name="surname" className="input" defaultValue={user.surname} required />
           </Field>
           <Field id="nafNumber" label="Service number" error={s.fields.nafNumber}>
             <input id="nafNumber" name="nafNumber" className="input font-mono" defaultValue={user.nafNumber} required />

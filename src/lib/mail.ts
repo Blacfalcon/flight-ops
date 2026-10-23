@@ -46,10 +46,10 @@ function layout(rawUnit: string, rawTitle: string, rawBody: string, action?: { l
 <table role="presentation" width="100%" style="max-width:520px;background:#ffffff;border:1px solid #DCE3EC;border-radius:12px">
 <tr><td style="background:#0B1F3A;color:#ffffff;padding:18px 24px;border-radius:12px 12px 0 0;font-weight:700">${unit} Flight Ops</td></tr>
 <tr><td style="padding:24px"><h1 style="font-size:18px;margin:0 0 12px">${title}</h1><p style="margin:0;line-height:1.5">${body}</p>${button}
-<p style="margin:24px 0 0;color:#4A5A70;font-size:12px">This message contains no operational detail. Sign in to view it.</p>
+<p style="margin:24px 0 0;color:#4A5A70;font-size:12px">For security, this email has no operational details. Sign in to see them.</p>
 <p style="margin:8px 0 0;color:#4A5A70;font-size:12px"><a href="${esc(manageUrl)}" style="color:#1F4FB0">Change which emails you get</a> on My profile.</p></td></tr>
 </table></td></tr></table></body></html>`;
-  const text = `${rawTitle}\n\n${rawBody}${action ? `\n\n${action.label}: ${action.url}` : ''}\n\nThis message contains no operational detail. Sign in to view it.\nChange which emails you get: ${manageUrl}`;
+  const text = `${rawTitle}\n\n${rawBody}${action ? `\n\n${action.label}: ${action.url}` : ''}\n\nFor security, this email has no operational details. Sign in to see them.\nChange which emails you get: ${manageUrl}`;
   return { html, text };
 }
 
@@ -62,7 +62,7 @@ export async function sendMail(to: string, subject: string, title: string, body:
 
 export function sendVerificationEmail(to: string, token: string) {
   const url = `${env.appUrl}/verify-email?token=${encodeURIComponent(token)}`;
-  return sendMail(to, 'Confirm your email', 'Confirm your email address', 'Confirm your email to continue your registration. The link expires in 24 hours.', {
+  return sendMail(to, 'Confirm your email', 'Confirm your email address', 'Confirm your email to finish registering. The link expires in 24 hours.', {
     label: 'Confirm email',
     url,
   });
@@ -70,7 +70,7 @@ export function sendVerificationEmail(to: string, token: string) {
 
 export function sendPasswordResetEmail(to: string, token: string) {
   const url = `${env.appUrl}/reset-password?token=${encodeURIComponent(token)}`;
-  return sendMail(to, 'Password reset', 'Reset your password', 'Someone asked to reset the password for this account. If it was you, use the link below within 1 hour. If not, ignore this email.', {
+  return sendMail(to, 'Password reset', 'Reset your password', 'We received a request to reset your password. Use the link below within 1 hour. If you did not ask for this, ignore this email. Your password stays the same.', {
     label: 'Reset password',
     url,
   });
@@ -78,7 +78,7 @@ export function sendPasswordResetEmail(to: string, token: string) {
 
 export function sendAlertEmail(to: string, count = 1, urgent = true) {
   const title = count > 1 ? `You have ${count} new items` : 'You have a new item';
-  const body = urgent ? `${count > 1 ? `${count} items are` : 'An item is'} waiting for your attention. Sign in to view ${count > 1 ? 'them' : 'it'}.` : `${count > 1 ? `${count} updates have` : 'An update has'} been posted since your last email. Sign in to view ${count > 1 ? 'them' : 'it'}.`;
+  const body = urgent ? `You have ${count > 1 ? `${count} items` : 'an item'} waiting for your action. Sign in to view ${count > 1 ? 'them' : 'it'}.` : `There ${count > 1 ? `are ${count} new updates` : 'is a new update'} since your last email. Sign in to view ${count > 1 ? 'them' : 'it'}.`;
   return sendMail(to, urgent ? 'Action required' : 'New updates', title, body, {
     label: 'Sign in',
     url: `${env.appUrl}/notifications`,
@@ -86,7 +86,7 @@ export function sendAlertEmail(to: string, count = 1, urgent = true) {
 }
 
 export function sendAccountActivatedEmail(to: string) {
-  return sendMail(to, 'Account activated', 'Your account is active', 'An administrator has activated your account. You can now sign in.', {
+  return sendMail(to, 'Account activated', 'Your account is active', 'Your account is now active. Sign in to get started.', {
     label: 'Sign in',
     url: `${env.appUrl}/login`,
   });

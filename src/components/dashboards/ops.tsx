@@ -44,7 +44,7 @@ export async function OpsDashboard({ canWeather }: { canWeather: boolean }) {
       )}
 
       <div className="flex flex-wrap items-start gap-6">
-        <Card className="min-w-0 flex-[2_1_560px]" title="Today’s scheduled and active missions" actions={<span className="text-[13px] text-ink-muted">Gates: Order · Engr · Ready · Risk · Plan</span>} bodyClass="">
+        <Card className="min-w-0 flex-[2_1_560px]" title="Today’s Scheduled and Active Missions" actions={<span className="text-[13px] text-ink-muted">Gates: Order · Engr · Ready · Risk · Plan</span>} bodyClass="">
           <MissionTable missions={d.todayMissions} showGates empty="Nothing scheduled today." />
         </Card>
         <Card className="min-w-0 flex-[1_1_320px]" title={`Weather · ${d.metar?.station ?? '—'}`} actions={canWeather ? <a href="/weather" className="btn-outline btn-sm">Update METAR / TAF</a> : undefined}>
@@ -64,7 +64,7 @@ export async function OpsDashboard({ canWeather }: { canWeather: boolean }) {
       </div>
 
       <div className="flex flex-wrap items-start gap-6">
-        <Card className="min-w-0 flex-[1_1_380px]" title="Crew availability today" bodyClass="">
+        <Card className="min-w-0 flex-[1_1_380px]" title="Crew Availability Today" bodyClass="">
           {crew.length === 0 ? (
             <Empty>No crew on today’s remaining missions.</Empty>
           ) : (
@@ -84,7 +84,7 @@ export async function OpsDashboard({ canWeather }: { canWeather: boolean }) {
             ))
           )}
         </Card>
-        <Card className="min-w-0 flex-[1_1_380px]" title="Flight plans to approve" actions={<a href="/flight-plans" className="text-[13px] font-semibold">All plans</a>} bodyClass="">
+        <Card className="min-w-0 flex-[1_1_380px]" title="Flight Plans to Approve" actions={<a href="/flight-plans" className="text-[13px] font-semibold">All plans</a>} bodyClass="">
           {d.plans.length === 0 ? (
             <Empty>No plans waiting.</Empty>
           ) : (

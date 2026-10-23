@@ -31,7 +31,7 @@ export function LoginForm({ next }: { next: string }) {
   if (challenge) {
     return (
       <form onSubmit={onCode} className="flex flex-col gap-5">
-        <h1 className="text-xl">Two-step sign-in</h1>
+        <h1 className="text-xl">Two-Step Sign-In</h1>
         <p className="text-ink-muted">Open your authenticator app and enter the 6-digit code for this app.</p>
         <FormError error={s.error} />
         <Field id="code" label="Code" error={s.fields.code}>
@@ -49,7 +49,7 @@ export function LoginForm({ next }: { next: string }) {
 
   return (
     <form onSubmit={onPassword} className="flex flex-col gap-5">
-      <h1 className="text-xl">Sign in</h1>
+      <h1 className="text-xl">Sign In</h1>
       <FormError error={s.error} />
       <Field id="identifier" label="Service number or email">
         <input id="identifier" name="identifier" autoComplete="username" className="input h-12" required />

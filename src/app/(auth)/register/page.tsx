@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { api } from '@/lib/client/api';
 import { resizeImage } from '@/lib/client/image';
 import { Field, FormError, useSubmit } from '@/components/form';
+import { PasswordFields, passwordMeetsRules } from '@/components/password-fields';
 import {
   APPOINTMENTS,
   APPOINTMENT_LABEL,
@@ -21,6 +22,12 @@ export default function RegisterPage() {
   const [flightStatus, setFlightStatus] = useState<string>('CAPTAIN');
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  // Checked as soon as the person leaves the box, before they press Create account.
+  const [live, setLive] = useState<{ email?: string; phone?: string }>({});
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const PHONE_RE = /^\+?[0-9 ()-]{7,20}$/;
+  const checkEmail = (v: string) => setLive((l) => ({ ...l, email: v.trim() && !EMAIL_RE.test(v.trim()) ? 'Enter a valid email address, for example name@example.com.' : undefined }));
+  const checkPhone = (v: string) => setLive((l) => ({ ...l, phone: v.trim() && !PHONE_RE.test(v.trim()) ? 'Enter a valid phone number, for example +234 803 000 0000.' : undefined }));
 
   async function pickPhoto(file: File | undefined) {
     setPhotoError(null);
@@ -35,6 +42,15 @@ export default function RegisterPage() {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
+    if (!EMAIL_RE.test((f.email ?? '').trim())) {
+      checkEmail(f.email ?? '');
+      s.setError('Check the email address.');
+      return;
+    }
+    if (!passwordMeetsRules(f.password ?? '')) {
+      s.setError('The password does not meet all the rules yet.');
+      return;
+    }
     if (f.password !== f.confirm) {
       s.setError('The two passwords do not match.');
       return;
@@ -54,7 +70,7 @@ export default function RegisterPage() {
   if (done) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-xl">Check your email</h1>
+        <h1 className="text-xl">Check Your Email</h1>
         <p>
           We sent a confirmation link to <strong>{done}</strong>. Open it within 24 hours. After that, Admin activates your account and you can sign in.
         </p>
@@ -68,7 +84,7 @@ export default function RegisterPage() {
   const err = s.fields;
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
-      <h1 className="text-xl">Create an account</h1>
+      <h1 className="text-xl">Create an Account</h1>
       <FormError error={s.error} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Field id="rank" label="Rank" error={err.rank}>
@@ -84,15 +100,46 @@ export default function RegisterPage() {
           <input id="nafNumber" name="nafNumber" className="input" required />
         </Field>
       </div>
-      <Field id="fullName" label="Full name" error={err.fullName}>
-        <input id="fullName" name="fullName" autoComplete="name" className="input" required />
-      </Field>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field id="email" label="Email" error={err.email}>
-          <input id="email" name="email" type="email" autoComplete="email" className="input" required />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Field id="firstName" label="First name" error={err.firstName}>
+          <input id="firstName" name="firstName" autoComplete="given-name" className="input" required />
         </Field>
-        <Field id="phone" label="Phone" error={err.phone}>
-          <input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="+234…" className="input" required />
+        <Field id="middleName" label="Middle name (optional)" error={err.middleName}>
+          <input id="middleName" name="middleName" autoComplete="additional-name" className="input" />
+        </Field>
+        <Field id="surname" label="Surname" error={err.surname}>
+          <input id="surname" name="surname" autoComplete="family-name" className="input" required />
+        </Field>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field id="email" label="Email" error={live.email ?? err.email}>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            className={`input ${live.email ? 'input-error' : ''}`}
+            required
+            aria-invalid={live.email ? true : undefined}
+            aria-describedby={live.email ? 'email-error' : undefined}
+            onBlur={(e) => checkEmail(e.target.value)}
+            onChange={(e) => live.email && checkEmail(e.target.value)}
+          />
+        </Field>
+        <Field id="phone" label="Phone" error={live.phone ?? err.phone}>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            placeholder="+234…"
+            className={`input ${live.phone ? 'input-error' : ''}`}
+            required
+            aria-invalid={live.phone ? true : undefined}
+            aria-describedby={live.phone ? 'phone-error' : undefined}
+            onBlur={(e) => checkPhone(e.target.value)}
+            onChange={(e) => live.phone && checkPhone(e.target.value)}
+          />
         </Field>
       </div>
       <Field id="appointment" label="Appointment" error={err.appointment}>
@@ -142,12 +189,7 @@ export default function RegisterPage() {
           )}
         </div>
       </Field>
-      <Field id="password" label="Password" error={err.password} hint="At least 10 characters, with letters and a number.">
-        <input id="password" name="password" type="password" autoComplete="new-password" className="input" required />
-      </Field>
-      <Field id="confirm" label="Confirm password">
-        <input id="confirm" name="confirm" type="password" autoComplete="new-password" className="input" required />
-      </Field>
+      <PasswordFields name="password" label="Password" confirmLabel="Confirm password" error={err.password} />
       <div className="flex flex-col gap-1">
         <label htmlFor="accept" className="flex items-start gap-3 text-[14px]">
           <input id="accept" name="accept" type="checkbox" required className="mt-0.5 h-5 w-5 shrink-0" aria-describedby={err.accept ? 'accept-error' : undefined} />

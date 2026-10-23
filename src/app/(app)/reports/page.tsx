@@ -28,7 +28,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
         ))}
       </nav>
       {auth.perms.has('summary.export') && (
-        <Card title="Generate now">
+        <Card title="Generate Now">
           <GenerateReport today={localDate()} />
         </Card>
       )}

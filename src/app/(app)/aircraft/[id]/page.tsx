@@ -69,7 +69,7 @@ export default async function AircraftDetailPage({ params }: { params: Promise<{
         </Card>
       )}
       <div className="flex flex-wrap items-start gap-6">
-        <Card className="min-w-0 flex-[1_1_420px]" title="Status history" bodyClass="">
+        <Card className="min-w-0 flex-[1_1_420px]" title="Status History" bodyClass="">
           {a.history.length === 0 ? (
             <Empty>No history yet.</Empty>
           ) : (

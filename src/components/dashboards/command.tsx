@@ -38,11 +38,11 @@ export async function CommandDashboard({ title }: { title: string }) {
 
       <div className="flex flex-wrap items-start gap-6">
         <div className="flex min-w-0 flex-[2_1_560px] flex-col gap-6">
-          <Card title="Today's flights" actions={<a href="/schedule" className="text-[13px] font-semibold">Open schedule</a>} bodyClass="">
+          <Card title="Today's Flights" actions={<a href="/schedule" className="text-[13px] font-semibold">Open schedule</a>} bodyClass="">
             <MissionTable missions={d.missions} empty="No flights scheduled today." />
           </Card>
           <Card
-            title="Aircraft availability"
+            title="Aircraft Availability"
             actions={<span className="text-[13px] text-ink-muted">{d.confirmedAt ? `Confirmed by ${d.confirmedBy ? personName(d.confirmedBy) : 'CO Engr'} ${localTime(d.confirmedAt)}` : 'Not yet confirmed today'}</span>}
           >
             <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-3">
@@ -57,7 +57,7 @@ export async function CommandDashboard({ title }: { title: string }) {
           </Card>
         </div>
         <div className="flex min-w-0 flex-[1_1_340px] flex-col gap-6">
-        <Card title="Mission orders awaiting approval" actions={<a href="/mission-orders?tab=SUBMITTED" className="text-[13px] font-semibold">All orders</a>} bodyClass="">
+        <Card title="Mission Orders Awaiting Approval" actions={<a href="/mission-orders?tab=SUBMITTED" className="text-[13px] font-semibold">All orders</a>} bodyClass="">
           {d.orders.length === 0 ? (
             <Empty>No mission orders waiting.</Empty>
           ) : (
@@ -74,7 +74,7 @@ export async function CommandDashboard({ title }: { title: string }) {
             ))
           )}
         </Card>
-        <Card id="approvals" title="Awaiting decision" actions={<a href="/risk" className="text-[13px] font-semibold">All approvals</a>}>
+        <Card id="approvals" title="Awaiting Decision" actions={<a href="/risk" className="text-[13px] font-semibold">All approvals</a>}>
           {d.pending.length === 0 ? (
             <Empty>Nothing is waiting for approval.</Empty>
           ) : (

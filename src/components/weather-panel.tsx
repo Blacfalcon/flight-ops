@@ -55,7 +55,7 @@ export function PlainWeather({ report, compact = false }: { report: Pick<Weather
         : null;
   return (
     <div className="flex flex-col gap-1.5 rounded-lg border border-line bg-white px-3.5 py-3">
-      <div className="text-[13px] font-semibold">{report.kind === 'METAR' ? 'Current weather in plain English' : 'Forecast (TAF) in plain English'}</div>
+      <div className="text-[13px] font-semibold">{report.kind === 'METAR' ? 'Current Weather in Plain English' : 'Forecast (TAF) in Plain English'}</div>
       {when && <div className="text-[13px] text-ink-muted">{when}</div>}
       <ul className={`ml-5 list-disc ${compact ? 'text-[13px]' : 'text-[14px]'} leading-relaxed`}>
         {lines.map((l, i) => (

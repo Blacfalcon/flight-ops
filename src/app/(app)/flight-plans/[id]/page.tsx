@@ -10,7 +10,7 @@ import { FlightPlanForm } from '@/components/flight-plan-form';
 import { ApprovePlan } from '@/components/approve-plan';
 import { Card, DefinitionGrid, PageHeader } from '@/components/ui';
 
-export const metadata = { title: 'Flight plan' };
+export const metadata = { title: 'Flight Plan' };
 
 export default async function PlanPage({ params }: { params: Promise<{ id: string }> }) {
   const auth = await requirePage(['flightplan.viewAll', 'flightplan.create']);
@@ -28,7 +28,7 @@ export default async function PlanPage({ params }: { params: Promise<{ id: strin
   return (
     <>
       <PageHeader
-        back={{ href: '/flight-plans', label: 'Flight plans' }}
+        back={{ href: '/flight-plans', label: 'Flight Plans' }}
         title={`${p.departure} → ${p.destination}`}
         sub={`Filed by ${personName(p.submittedBy)} · ${formatDateTime(p.createdAt)}`}
         actions={
@@ -39,7 +39,7 @@ export default async function PlanPage({ params }: { params: Promise<{ id: strin
         }
       />
       {editable ? (
-        <Card title="Edit plan">
+        <Card title="Edit Plan">
           <FlightPlanForm
             missions={await myOpenMissions(auth.user.id)}
             initial={{

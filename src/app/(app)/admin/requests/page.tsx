@@ -6,7 +6,7 @@ import { formatDateTime } from '@/lib/time';
 import { Card, Empty, PageHeader } from '@/components/ui';
 import { DecideRequest } from '@/components/decide-request';
 
-export const metadata = { title: 'Change requests' };
+export const metadata = { title: 'Change Requests' };
 
 const LABELS: Record<string, { title: string; values: Record<string, string> }> = {
   rank: { title: 'Rank', values: RANK_LABEL },
@@ -28,7 +28,7 @@ export default async function RequestsPage() {
   };
   return (
     <>
-      <PageHeader title="Change requests" sub="Changes to rank, appointment, flight status or pilot category take effect only after approval. An appointment change signs the person out. Approving an account deletion deletes the person's email, phone, photo and password and closes the account; their name stays on unit records." />
+      <PageHeader title="Change Requests" sub="Changes to rank, appointment, flight status or pilot category take effect only after approval. An appointment change signs the person out. Approving an account deletion deletes the person's email, phone, photo and password and closes the account; their name stays on unit records." />
       <Card title={`Pending (${pending.length})`} bodyClass="">
         {pending.length === 0 ? (
           <Empty>Nothing waiting.</Empty>
@@ -48,7 +48,7 @@ export default async function RequestsPage() {
           ))
         )}
       </Card>
-      <Card title="Recently decided" bodyClass="">
+      <Card title="Recently Decided" bodyClass="">
         {recent.length === 0 ? (
           <Empty>None.</Empty>
         ) : (

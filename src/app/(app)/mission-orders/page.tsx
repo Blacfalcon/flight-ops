@@ -4,7 +4,7 @@ import { ORDER_STATUS_LABEL, PRIORITY_LABEL, missionTypeLabel } from '@/lib/cons
 import { formatShortDate, localTime } from '@/lib/time';
 import { Card, Empty, MissionStatusPill, PageHeader } from '@/components/ui';
 
-export const metadata = { title: 'Mission orders' };
+export const metadata = { title: 'Mission Orders' };
 
 const TABS = [
   { key: 'SUBMITTED', label: 'Awaiting approval' },
@@ -33,7 +33,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   return (
     <>
       <PageHeader
-        title="Mission orders"
+        title="Mission Orders"
         sub={
           seesAll
             ? 'Every sortie has an order. It is raised with the sortie on the schedule, approved by CO Flying Wing or the Commander, then published by the Operations Officer.'

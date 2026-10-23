@@ -4,7 +4,7 @@ import { addDays, localDate } from '@/lib/time';
 import { MissionTable } from '@/components/mission-table';
 import { Card, PageHeader } from '@/components/ui';
 
-export const metadata = { title: 'My missions' };
+export const metadata = { title: 'My Missions' };
 
 export default async function MyMissionsPage() {
   const auth = await requirePage('dashboard.pilot');
@@ -15,11 +15,11 @@ export default async function MyMissionsPage() {
   ]);
   return (
     <>
-      <PageHeader title="My missions" sub="Your published missions for the next 30 days and the last 90." />
+      <PageHeader title="My Missions" sub="Your published missions for the next 30 days and the last 90." />
       <Card title="Upcoming" bodyClass="">
         <MissionTable missions={upcoming} empty="No upcoming missions." />
       </Card>
-      <Card title="Flight history" bodyClass="">
+      <Card title="Flight History" bodyClass="">
         <MissionTable missions={past.reverse()} empty="No missions in the last 90 days." />
       </Card>
     </>

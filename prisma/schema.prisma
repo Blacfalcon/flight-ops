@@ -195,6 +195,9 @@ model User {
   id               String        @id @default(uuid()) @db.Uuid
   rank             Rank
   fullName         String        @map("full_name")
+  firstName        String        @default("") @map("first_name")
+  middleName       String?       @map("middle_name")
+  surname          String        @default("")
   nafNumber        String        @unique @map("naf_number")
   email            String        @unique
   phone            String
@@ -247,6 +250,7 @@ model User {
   syncReceipts         SyncReceipt[]
 
   @@index([appointment])
+  @@index([surname])
   @@map("users")
 }
 

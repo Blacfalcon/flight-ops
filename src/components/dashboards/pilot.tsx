@@ -42,7 +42,7 @@ export async function PilotDashboard({ userId, name, compact = false }: { userId
           </a>
         </section>
       ) : (
-        <Card title="Next mission">
+        <Card title="Next Mission">
           <Empty>No missions for you in the next 7 days.</Empty>
         </Card>
       )}
@@ -53,14 +53,14 @@ export async function PilotDashboard({ userId, name, compact = false }: { userId
             <PlainWeather report={d.metar} compact />
           </ValidReport>
           <a href="/weather" className="self-start text-[13px] font-semibold">
-            Full weather and TAF
+            Full Weather and TAF
           </a>
         </section>
       )}
 
-      <Card title="My upcoming missions" actions={<a href="/missions" className="text-[13px] font-semibold">All</a>} bodyClass="">
+      <Card title="My Upcoming Missions" actions={<a href="/missions" className="text-[13px] font-semibold">All</a>} bodyClass="">
         {open.length <= 1 ? (
-          <Empty>Nothing else scheduled.</Empty>
+          <Empty>No scheduled missions.</Empty>
         ) : (
           open.slice(1).map((m) => {
             const seat = m.crew.find((c) => c.userId === userId);
@@ -80,9 +80,9 @@ export async function PilotDashboard({ userId, name, compact = false }: { userId
       </Card>
 
       {!compact && (
-        <Card title="Recent flights" bodyClass="">
+        <Card title="Recent Flights" bodyClass="">
           {d.recent.length === 0 ? (
-            <Empty>No flights recorded yet.</Empty>
+            <Empty>No flights recorded.</Empty>
           ) : (
             <div className="overflow-x-auto">
               <table className="table">

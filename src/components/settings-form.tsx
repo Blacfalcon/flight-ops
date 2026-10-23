@@ -45,7 +45,7 @@ export function SettingsForm({ initial }: { initial: Settings }) {
       <BrandingImages />
 
       <section className="card flex flex-col gap-4 p-5">
-        <h2>Risk assessment approvers</h2>
+        <h2>Risk Assessment Approvers</h2>
         <p className="hint mt-0">Only CO Flying Wing and the Commander approve risk assessments. Every ticked role must approve before a mission is cleared. A GOO appointed as acting Commander decides in the Commander’s place.</p>
         <div className="flex flex-wrap gap-4">
           {ROLES.map((r) => (
@@ -62,7 +62,7 @@ export function SettingsForm({ initial }: { initial: Settings }) {
       </section>
 
       <section className="card flex flex-col gap-4 p-5">
-        <h2>Risk scoring</h2>
+        <h2>Risk Scoring</h2>
         <div className="grid gap-4 sm:grid-cols-3">
           <Field id="lowMax" label="Low up to (score)">
             <input id="lowMax" type="number" className="input" value={v.riskThresholds.lowMax} onChange={(e) => setV((x) => ({ ...x, riskThresholds: { ...x.riskThresholds, lowMax: num(e.target.value) } }))} />
@@ -77,7 +77,7 @@ export function SettingsForm({ initial }: { initial: Settings }) {
       </section>
 
       <section className="card flex flex-col gap-4 p-5">
-        <h2>Weather minima (pre-rate the weather category)</h2>
+        <h2>Weather Minima (Pre-Rate the Weather Category)</h2>
         <p className="hint mt-0">Defaults follow ICAO VFR at a controlled aerodrome. Set the night values to the national night VFR rules.</p>
         <div className="grid gap-4 sm:grid-cols-4">
           {(
@@ -96,7 +96,7 @@ export function SettingsForm({ initial }: { initial: Settings }) {
       </section>
 
       <section className="card flex flex-col gap-4 p-5">
-        <h2>Reminders, fuel, inspections and reports</h2>
+        <h2>Reminders, Fuel, Inspections and Reports</h2>
         <div className="grid gap-4 sm:grid-cols-3">
           <Field id="readinessMinutes" label="Readiness request (minutes before take-off)">
             <input id="readinessMinutes" type="number" className="input" value={v.reminders.readinessMinutes} onChange={(e) => setV((x) => ({ ...x, reminders: { ...x.reminders, readinessMinutes: num(e.target.value) } }))} />
@@ -152,7 +152,7 @@ function HomeAerodrome({ value, error, onChange }: { value: Home; error?: string
 
   return (
     <section className="card flex flex-col gap-4 p-5">
-      <h2>Home aerodrome</h2>
+      <h2>Home Aerodrome</h2>
       <p className="hint mt-0">
         Used as the default departure on flight plans and the default station for weather. Currently: <strong>{value.icao ? `${value.icao} · ` : ''}{value.name}</strong>
       </p>
@@ -238,7 +238,7 @@ function BrandingImages() {
 
   return (
     <section className="card flex flex-col gap-4 p-5">
-      <h2>Logo and watermark</h2>
+      <h2>Logo and Watermark</h2>
       <p className="hint mt-0">JPG or PNG; PNG with a transparent background looks best. Images are resized to 512 px before upload. The watermark is shown very faintly behind every page.</p>
       <FormError error={s.error} />
       <FormNotice notice={s.notice} />

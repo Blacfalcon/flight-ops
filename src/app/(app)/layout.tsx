@@ -29,22 +29,22 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const nav: NavItem[] = [
     { href: '/dashboard', label: 'Dashboard', show: true },
-    { href: '/schedule', label: 'Schedule & missions', show: p.has('schedule.viewAll') },
-    { href: '/missions', label: 'My missions', show: p.has('dashboard.pilot') },
-    { href: '/risk', label: 'Risk approvals', show: p.has('risk.view'), badge: awaitingMe },
+    { href: '/schedule', label: 'Schedule & Missions', show: p.has('schedule.viewAll') },
+    { href: '/missions', label: 'My Missions', show: p.has('dashboard.pilot') },
+    { href: '/risk', label: 'Risk Approvals', show: p.has('risk.view'), badge: awaitingMe },
     { href: '/aircraft', label: 'Aircraft', show: p.has('aircraft.view') },
-    { href: '/engineering/serviceability', label: 'Daily confirmation', show: p.has('serviceability.confirm') },
+    { href: '/engineering/serviceability', label: 'Daily Confirmation', show: p.has('serviceability.confirm') },
     { href: '/engineering/snags', label: 'Snags', show: p.has('snag.view') },
-    { href: '/flight-plans', label: 'Flight plans', show: p.has('flightplan.viewAll') || p.has('flightplan.create') },
-    { href: '/mission-orders', label: 'Mission orders', show: p.has('order.view') || p.has('dashboard.pilot'), badge: ordersToApprove },
+    { href: '/flight-plans', label: 'Flight Plans', show: p.has('flightplan.viewAll') || p.has('flightplan.create') },
+    { href: '/mission-orders', label: 'Mission Orders', show: p.has('order.view') || p.has('dashboard.pilot'), badge: ordersToApprove },
     { href: '/weather', label: 'Weather', show: p.has('weather.view') },
     { href: '/safety', label: 'Safety', show: p.has('safety.view') || p.has('safety.raise') },
     { href: '/reports', label: 'Reports', show: p.has('summary.view') },
     { href: '/admin/users', label: 'Personnel', show: p.has('personnel.view') },
-    { href: '/admin/requests', label: 'Change requests', show: p.has('changeRequest.decide'), badge: pendingRequests },
+    { href: '/admin/requests', label: 'Change Requests', show: p.has('changeRequest.decide'), badge: pendingRequests },
     { href: '/admin/delegations', label: 'Acting Commander', show: p.has('delegation.manage') },
     { href: '/admin/settings', label: 'Settings', show: p.has('settings.manage') },
-    { href: '/admin/audit', label: 'Audit log', show: p.has('audit.view') },
+    { href: '/admin/audit', label: 'Audit Log', show: p.has('audit.view') },
   ];
 
   const roleLabel = auth.actingCommander ? 'GOO · acting Commander' : APPOINTMENT_LABEL[auth.user.appointment as AppointmentValue];

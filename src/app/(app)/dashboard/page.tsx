@@ -79,7 +79,7 @@ export default async function DashboardPage() {
       {main}
       {alsoPilot && (
         <section aria-label="My flying" className="flex flex-col gap-6 border-t border-line pt-6">
-          <h2 className="text-xl font-bold">My flying</h2>
+          <h2 className="text-xl font-bold">My Flying</h2>
           <PilotDashboard userId={auth.user.id} name={personName(auth.user)} compact />
         </section>
       )}

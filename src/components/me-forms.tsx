@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { api } from '@/lib/client/api';
 import { APPOINTMENTS, APPOINTMENT_LABEL, FLIGHT_STATUSES, FLIGHT_STATUS_LABEL, PILOT_CATEGORIES, PILOT_CATEGORY_LABEL, RANKS, RANK_LABEL } from '@/lib/constants';
 import { Field, FormError, FormNotice, useSubmit } from './form';
+import { PasswordFields, passwordMeetsRules } from './password-fields';
 
 export function ContactForm({ phone }: { phone: string }) {
   const s = useSubmit();
@@ -119,6 +120,7 @@ export function ChangeRequest({ current }: { current: Record<string, string> }) 
 
 export function ChangePassword() {
   const s = useSubmit();
+  const [formKey, setFormKey] = useState(0);
   return (
     <form
       className="flex flex-col gap-3"
@@ -126,12 +128,17 @@ export function ChangePassword() {
         e.preventDefault();
         const form = e.currentTarget;
         const f = new FormData(form);
+        if (!passwordMeetsRules(String(f.get('next')))) {
+          s.setError('The new password does not meet all the rules yet.');
+          return;
+        }
         if (f.get('next') !== f.get('confirm')) {
           s.setError('The new passwords do not match.');
           return;
         }
         if (await s.run(() => api('me/password', { body: { current: f.get('current'), next: f.get('next') } }))) {
           form.reset();
+          setFormKey((k) => k + 1);
           s.setNotice('Password changed. Other devices have been signed out.');
         }
       }}
@@ -141,12 +148,7 @@ export function ChangePassword() {
       <Field id="current" label="Current password" error={s.fields.current}>
         <input id="current" name="current" type="password" autoComplete="current-password" className="input" required />
       </Field>
-      <Field id="next" label="New password" error={s.fields.next} hint="At least 10 characters, with letters and a number.">
-        <input id="next" name="next" type="password" autoComplete="new-password" className="input" required />
-      </Field>
-      <Field id="confirm" label="Confirm new password">
-        <input id="confirm" name="confirm" type="password" autoComplete="new-password" className="input" required />
-      </Field>
+      <PasswordFields key={formKey} name="next" label="New password" confirmLabel="Confirm new password" error={s.fields.next} />
       <button className="btn-secondary self-start" disabled={s.busy}>
         Change password
       </button>

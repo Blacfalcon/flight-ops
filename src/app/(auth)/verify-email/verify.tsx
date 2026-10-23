@@ -25,7 +25,7 @@ export function VerifyEmail({ token }: { token: string }) {
   if (state === 'failed')
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-xl">Could not confirm</h1>
+        <h1 className="text-xl">Could Not Confirm</h1>
         <div className="alert-bad">{message}</div>
         <a href="/login" className="btn-secondary self-start">
           Back to sign in
@@ -34,7 +34,7 @@ export function VerifyEmail({ token }: { token: string }) {
     );
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-xl">Email confirmed</h1>
+      <h1 className="text-xl">Email Confirmed</h1>
       <p>Thank you. Admin has been told your account is ready to activate. You will get an email when you can sign in.</p>
       <a href="/login" className="btn-secondary self-start">
         Back to sign in

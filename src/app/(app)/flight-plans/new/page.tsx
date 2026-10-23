@@ -4,7 +4,7 @@ import { getSettings } from '@/lib/settings';
 import { FlightPlanForm } from '@/components/flight-plan-form';
 import { Card, PageHeader } from '@/components/ui';
 
-export const metadata = { title: 'New flight plan' };
+export const metadata = { title: 'New Flight Plan' };
 
 export default async function NewPlanPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const auth = await requirePage('flightplan.create');
@@ -12,7 +12,7 @@ export default async function NewPlanPage({ searchParams }: { searchParams: Prom
   const [missions, settings] = await Promise.all([myOpenMissions(auth.user.id), getSettings()]);
   return (
     <>
-      <PageHeader title="New flight plan" back={{ href: '/flight-plans', label: 'Flight plans' }} sub="Draft it any time; submit it for the Operations Officer to approve. Works offline." />
+      <PageHeader title="New Flight Plan" back={{ href: '/flight-plans', label: 'Flight Plans' }} sub="Draft it any time; submit it for the Operations Officer to approve. Works offline." />
       <Card>
         <FlightPlanForm
           missions={missions}

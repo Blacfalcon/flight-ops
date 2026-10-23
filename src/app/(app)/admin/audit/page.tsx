@@ -6,7 +6,7 @@ import { personName } from '@/lib/constants';
 import { formatDateTime } from '@/lib/time';
 import { Card, Empty, PageHeader } from '@/components/ui';
 
-export const metadata = { title: 'Audit log' };
+export const metadata = { title: 'Audit Log' };
 
 const PAGE = 100;
 
@@ -25,7 +25,7 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
 
   return (
     <>
-      <PageHeader title="Audit log" sub={`${total.toLocaleString('en-GB')} entries. The log cannot be edited or deleted.`} />
+      <PageHeader title="Audit Log" sub={`${total.toLocaleString('en-GB')} entries. The log cannot be edited or deleted.`} />
       <form className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-end">
         <div className="flex-1">
           <label htmlFor="action" className="label">

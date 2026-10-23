@@ -23,7 +23,7 @@ export default async function WeatherPage() {
     <>
       <PageHeader title={`Weather${metar ? ` · ${metar.station}` : ''}`} sub={metar ? `METAR entered by ${personName(metar.enteredBy)} · ${formatDateTime(metar.createdAt)}` : 'No reports yet.'} />
       <div className="flex flex-wrap items-start gap-6">
-        <Card className="min-w-0 flex-[1_1_380px]" title="Current conditions">
+        <Card className="min-w-0 flex-[1_1_380px]" title="Current Conditions">
           <div className="flex flex-col gap-4">
             <ValidReport report={metar}>
               <div className="flex flex-col gap-4">
@@ -46,7 +46,7 @@ export default async function WeatherPage() {
           </Card>
         )}
       </div>
-      <Card title="Recent reports" bodyClass="">
+      <Card title="Recent Reports" bodyClass="">
         <div className="overflow-x-auto">
           <table className="table">
             <thead>

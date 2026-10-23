@@ -7,6 +7,7 @@ import { sendVerificationEmail } from '@/lib/mail';
 import { rateLimit } from '@/lib/rate-limit';
 import { audit } from '@/lib/audit';
 import { decodeImage } from '@/lib/images';
+import { joinName } from '@/lib/names';
 
 export const POST = publicRoute(registerSchema, async (body, req) => {
   const limit = rateLimit(`register:${clientIp(req)}`, 5, 15 * 60_000);
@@ -27,6 +28,7 @@ export const POST = publicRoute(registerSchema, async (body, req) => {
   const user = await db.user.create({
     data: {
       ...rest,
+      fullName: joinName(rest.firstName, rest.middleName, rest.surname),
       passwordHash: await hashPassword(password),
       accountStatus: 'PENDING_VERIFICATION',
       ...(img ? { photo: new Uint8Array(img.data), photoMime: img.mime, photoUpdatedAt: new Date() } : {}),

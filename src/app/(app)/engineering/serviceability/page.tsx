@@ -5,7 +5,7 @@ import { localDateStr } from '@/lib/validators';
 import { PageHeader } from '@/components/ui';
 import { ServiceabilityForm } from '@/components/serviceability-form';
 
-export const metadata = { title: 'Daily confirmation' };
+export const metadata = { title: 'Daily Confirmation' };
 
 export default async function ServiceabilityPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   await requirePage('serviceability.confirm');
@@ -31,7 +31,7 @@ export default async function ServiceabilityPage({ searchParams }: { searchParam
   return (
     <>
       <PageHeader
-        title="Confirm serviceability"
+        title="Confirm Serviceability"
         sub={formatLongDate(date)}
         actions={
           <>

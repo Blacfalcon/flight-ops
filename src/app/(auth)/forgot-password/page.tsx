@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
   if (sent)
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-xl">Check your email</h1>
+        <h1 className="text-xl">Check Your Email</h1>
         <p>If that address belongs to an active account, a reset link is on its way. It works for 1 hour.</p>
         <a href="/login" className="btn-secondary self-start">
           Back to sign in
@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
-      <h1 className="text-xl">Reset your password</h1>
+      <h1 className="text-xl">Reset Your Password</h1>
       <FormError error={s.error} />
       <Field id="email" label="Your email">
         <input id="email" name="email" type="email" autoComplete="email" className="input h-12" required />

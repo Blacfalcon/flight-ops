@@ -127,7 +127,7 @@ export function RiskForm({
 
       <section aria-label="IMSAFE" className="card flex flex-col gap-3 p-4">
         <div className="flex items-baseline justify-between">
-          <h2>IMSAFE · you</h2>
+          <h2>IMSAFE · You</h2>
           {crewCount > 1 && <span className="text-[13px] text-ink-muted">Other crew add theirs after you submit</span>}
         </div>
         <p className="text-[13px] text-ink-muted">Is any of these affecting you today?</p>

@@ -17,7 +17,7 @@ export async function SafetyDashboard() {
         <Kpi label="Open hazard and incident reports" value={d.reports.length} />
       </div>
       <div className="flex flex-wrap items-start gap-6">
-        <Card className="min-w-0 flex-[1_1_420px]" title="Risk assessments awaiting decision" actions={<a href="/risk" className="text-[13px] font-semibold">All</a>}>
+        <Card className="min-w-0 flex-[1_1_420px]" title="Risk Assessments Awaiting Decision" actions={<a href="/risk" className="text-[13px] font-semibold">All</a>}>
           {d.pending.length === 0 ? (
             <Empty>None waiting.</Empty>
           ) : (
@@ -30,7 +30,7 @@ export async function SafetyDashboard() {
             </div>
           )}
         </Card>
-        <Card className="min-w-0 flex-[1_1_380px]" title="Open hazard and incident reports" actions={<a href="/safety" className="text-[13px] font-semibold">Manage</a>} bodyClass="">
+        <Card className="min-w-0 flex-[1_1_380px]" title="Open Hazard and Incident Reports" actions={<a href="/safety" className="text-[13px] font-semibold">Manage</a>} bodyClass="">
           {d.reports.length === 0 ? (
             <Empty>No open reports.</Empty>
           ) : (

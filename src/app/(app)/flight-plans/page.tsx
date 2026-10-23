@@ -6,7 +6,7 @@ import { formatShortDate, hm } from '@/lib/time';
 import { fuelLabel } from '@/lib/fuel';
 import { Card, Empty, PageHeader } from '@/components/ui';
 
-export const metadata = { title: 'Flight plans' };
+export const metadata = { title: 'Flight Plans' };
 
 const TONE: Record<string, string> = { DRAFT: 'pill-none', SUBMITTED: 'pill-warn', APPROVED: 'pill-good' };
 
@@ -24,7 +24,7 @@ export default async function FlightPlansPage({ searchParams }: { searchParams: 
   return (
     <>
       <PageHeader
-        title="Flight plans"
+        title="Flight Plans"
         sub={all ? 'All flight plans. Ops approves submitted plans.' : 'Your flight plans.'}
         actions={auth.perms.has('flightplan.create') ? <a href="/flight-plans/new" className="btn-primary">New flight plan</a> : undefined}
       />

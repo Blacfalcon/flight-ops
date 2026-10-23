@@ -8,7 +8,7 @@ import { Card, PageHeader } from '@/components/ui';
 import { UserAdminForm } from '@/components/user-admin-form';
 import { PhotoUpload } from '@/components/photo-upload';
 
-export const metadata = { title: 'Edit person' };
+export const metadata = { title: 'Edit Person' };
 
 export default async function UserPage({ params }: { params: Promise<{ id: string }> }) {
   await requirePage('personnel.manage');
@@ -26,12 +26,14 @@ export default async function UserPage({ params }: { params: Promise<{ id: strin
       <Card title="Photo">
         <PhotoUpload user={{ id: u.id, fullName: u.fullName, photoUpdatedAt: u.photoUpdatedAt?.toISOString() ?? null }} />
       </Card>
-      <Card title="Particulars and access">
+      <Card title="Particulars and Access">
         <UserAdminForm
           user={{
             id: u.id,
             rank: u.rank,
-            fullName: u.fullName,
+            firstName: u.firstName,
+            middleName: u.middleName,
+            surname: u.surname,
             nafNumber: u.nafNumber,
             email: u.email,
             phone: u.phone,

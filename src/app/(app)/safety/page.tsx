@@ -24,7 +24,7 @@ export default async function SafetyPage() {
     <>
       <PageHeader title="Safety" sub="Report hazards and incidents. The Safety Officer reviews every report." />
       {auth.perms.has('safety.raise') && (
-        <Card title="Report a hazard or incident">
+        <Card title="Report a Hazard or Incident">
           <SafetyReportForm aircraft={aircraft} />
         </Card>
       )}

@@ -30,7 +30,7 @@ export function ImsafeForm({ riskId, missionNo }: { riskId: string; missionNo: s
     <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
       <FormError error={s.error} />
       <section className="card flex flex-col gap-3 p-4">
-        <h2>Your IMSAFE check</h2>
+        <h2>Your IMSAFE Check</h2>
         <p className="text-[13px] text-ink-muted">Is any of these affecting you today? A yes may raise the mission’s risk level.</p>
         <ImsafeToggles value={value} onChange={setValue} />
         <label htmlFor="notes" className="label mt-2">

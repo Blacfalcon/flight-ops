@@ -17,7 +17,7 @@ import { PhotoUpload } from '@/components/photo-upload';
 import { PhonePush } from '@/components/phone-push';
 import { DeleteMyAccount } from '@/components/delete-account';
 
-export const metadata = { title: 'My profile' };
+export const metadata = { title: 'My Profile' };
 
 const LABELS: Record<string, Record<string, string>> = { rank: RANK_LABEL, appointment: APPOINTMENT_LABEL, flightStatus: FLIGHT_STATUS_LABEL, pilotCategory: PILOT_CATEGORY_LABEL };
 const FIELD_TITLE: Record<string, string> = { rank: 'rank', appointment: 'appointment', flightStatus: 'flight status', pilotCategory: 'pilot category' };
@@ -33,7 +33,7 @@ export default async function MePage() {
 
   return (
     <>
-      <PageHeader title="My profile" actions={<a href="/me/security" className="btn-secondary btn-sm">Sign-in security</a>} />
+      <PageHeader title="My Profile" actions={<a href="/me/security" className="btn-secondary btn-sm">Sign-in security</a>} />
       {delegation && (
         <div className="alert-info">
           You are appointed acting Commander from {formatDateTime(delegation.startsAt)} to {formatDateTime(delegation.endsAt)}.
@@ -58,16 +58,16 @@ export default async function MePage() {
         />
       </Card>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6">
-        <Card title="Contact details">
+        <Card title="Contact Details">
           <ContactForm phone={u.phone} />
         </Card>
-        <Card title="Phone notifications">
+        <Card title="Phone Notifications">
           <PhonePush />
         </Card>
-        <Card title="Email notifications">
+        <Card title="Email Notifications">
           <EmailAlertsForm current={u.emailAlerts} />
         </Card>
-        <Card title="Request a change">
+        <Card title="Request a Change">
           <ChangeRequest current={{ rank: u.rank, appointment: u.appointment, flightStatus: u.flightStatus, pilotCategory: u.pilotCategory }} />
           {pending.length > 0 && (
             <div className="mt-4 flex flex-col gap-2 text-[13px]">
@@ -85,7 +85,7 @@ export default async function MePage() {
         <Card title="Password">
           <ChangePassword />
         </Card>
-        <Card title="Delete my account">
+        <Card title="Delete My Account">
           <DeleteMyAccount pending={pending.some((p) => p.field === 'accountDeletion' && p.status === 'PENDING')} />
         </Card>
       </div>

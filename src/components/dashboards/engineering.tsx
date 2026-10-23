@@ -39,7 +39,7 @@ export async function EngineeringDashboard({ canConfirm = true }: { canConfirm?:
         <Kpi label="Open snags" value={d.snags.length} />
       </div>
 
-      <Card title="Fleet status" actions={<a href="/aircraft" className="text-[13px] font-semibold">Fleet records</a>} bodyClass="">
+      <Card title="Fleet Status" actions={<a href="/aircraft" className="text-[13px] font-semibold">Fleet records</a>} bodyClass="">
         <div className="overflow-x-auto">
           <table className="table min-w-[760px]">
             <thead>
@@ -88,7 +88,7 @@ export async function EngineeringDashboard({ canConfirm = true }: { canConfirm?:
       </Card>
 
       <div className="flex flex-wrap items-start gap-6">
-        <Card className="min-w-0 flex-[1_1_420px]" title="Open snags" actions={<a href="/engineering/snags" className="text-[13px] font-semibold">All snags</a>} bodyClass="">
+        <Card className="min-w-0 flex-[1_1_420px]" title="Open Snags" actions={<a href="/engineering/snags" className="text-[13px] font-semibold">All snags</a>} bodyClass="">
           {d.snags.length === 0 ? (
             <Empty>No open snags.</Empty>
           ) : (
@@ -104,7 +104,7 @@ export async function EngineeringDashboard({ canConfirm = true }: { canConfirm?:
             ))
           )}
         </Card>
-        <Card className="min-w-0 flex-[1_1_320px]" title="Maintenance alerts">
+        <Card className="min-w-0 flex-[1_1_320px]" title="Maintenance Alerts">
           {d.dueSoon.length === 0 ? (
             <Empty>No inspections due soon.</Empty>
           ) : (

@@ -252,7 +252,7 @@ export function ScheduleBuilder({
           <p className="text-[12px] text-ink-muted">Overlaps with other missions are checked when you save.</p>
         </div>
         <div className="card flex flex-col gap-2 p-5 text-[13px]">
-          <h2 className="mb-1">Pairing rules</h2>
+          <h2 className="mb-1">Pairing Rules</h2>
           <div>Trainee Pilot → must fly with an Instructor Pilot.</div>
           <div>Co-Pilot → must fly with an Instructor Pilot or a Captain.</div>
         </div>

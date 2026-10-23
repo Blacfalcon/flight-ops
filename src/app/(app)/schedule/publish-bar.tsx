@@ -34,7 +34,7 @@ export function PublishBar({ missions }: { missions: Item[] }) {
     <section className="card flex flex-col gap-3 border-2 border-brand p-5" aria-label="Publish">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2>Unpublished missions</h2>
+          <h2>Unpublished Missions</h2>
           <p className="text-[13px] text-ink-muted">Crews are notified when you publish. A sortie can be published once its mission order is approved and its aircraft is confirmed serviceable.</p>
         </div>
         <button className="btn-primary" disabled={busy || !selected.length} onClick={publish}>

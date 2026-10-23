@@ -5,7 +5,7 @@ import { formatShortDate, localTime } from '@/lib/time';
 import { ApprovalSummary } from '@/components/approval-card';
 import { Card, Empty, PageHeader, RiskPill } from '@/components/ui';
 
-export const metadata = { title: 'Risk approvals' };
+export const metadata = { title: 'Risk Approvals' };
 
 const TABS = [
   { key: 'SUBMITTED', label: 'Awaiting decision' },
@@ -25,7 +25,7 @@ export default async function RiskQueuePage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <PageHeader title="Risk approvals" sub="Risk assessments go to every required approver at once." />
+      <PageHeader title="Risk Approvals" sub="Risk assessments go to every required approver at once." />
       <nav aria-label="Filter" className="flex flex-wrap gap-2">
         {TABS.map((t) => (
           <a key={t.key} href={`/risk?status=${t.key}`} aria-current={tab === t.key ? 'page' : undefined} className={`rounded-full px-4 py-2 text-[13px] font-semibold no-underline ${tab === t.key ? 'bg-navy text-white' : 'bg-white text-ink'}`}>

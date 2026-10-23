@@ -91,7 +91,7 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
 
       <div className="flex flex-wrap items-start gap-6">
         <div className="flex min-w-0 flex-[2_1_520px] flex-col gap-6">
-          <Card title="Mission details">
+          <Card title="Mission Details">
             <DefinitionGrid
               items={[
                 { label: 'Aircraft', value: <span className="flex items-center gap-2"><span className="font-mono">{m.aircraft.registration}</span><AircraftStatusPill status={m.aircraft.status} /></span> },
@@ -104,7 +104,7 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
             />
           </Card>
 
-          <Card title="Crew and readiness" bodyClass="">
+          <Card title="Crew and Readiness" bodyClass="">
             {m.crew.map((c) => (
               <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 border-t border-[#EEF1F5] px-5 py-3 first:border-0">
                 <div className="flex items-center gap-3">
@@ -128,7 +128,7 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
             )}
           </Card>
 
-          <Card title="Risk assessment" actions={ra && auth.perms.has('risk.view') ? <a href={`/risk/${ra.id}`} className="text-[13px] font-semibold">Full assessment</a> : undefined}>
+          <Card title="Risk Assessment" actions={ra && auth.perms.has('risk.view') ? <a href={`/risk/${ra.id}`} className="text-[13px] font-semibold">Full assessment</a> : undefined}>
             {ra ? (
               <div className="flex flex-col gap-4">
                 {ra.status === 'REJECTED' && <div className="alert-bad">Rejected. The pilot in command can revise and resubmit.</div>}
@@ -150,7 +150,7 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
           </Card>
 
           {me && !closed && m.status !== 'AWAITING_ENGINEERING' && m.status !== 'DRAFT' && (
-            <Card title="Close the mission">
+            <Card title="Close the Mission">
               <CloseOutForm missionId={m.id} missionNo={m.missionNo} canComplete={m.status === 'CLEARED'} />
             </Card>
           )}
@@ -185,7 +185,7 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
 
         <div className="flex min-w-0 flex-[1_1_320px] flex-col gap-6">
           <Card
-            title="Mission order"
+            title="Mission Order"
             actions={
               canEdit ? (
                 <a href={`/missions/${m.id}/edit`} className="btn-outline btn-sm">
@@ -247,7 +247,7 @@ export default async function MissionPage({ params }: { params: Promise<{ id: st
           </Card>
 
           <Card
-            title="Flight plan"
+            title="Flight Plan"
             actions={
               me && !closed ? (
                 <a href={plan && plan.status !== 'APPROVED' && plan.submittedById === auth.user.id ? `/flight-plans/${plan.id}` : `/flight-plans/new?missionId=${m.id}`} className="btn-outline btn-sm">

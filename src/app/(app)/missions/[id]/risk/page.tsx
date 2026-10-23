@@ -9,7 +9,7 @@ import { PageHeader } from '@/components/ui';
 import { RiskForm } from '@/components/risk/risk-form';
 import { ImsafeForm } from '@/components/risk/imsafe-form';
 
-export const metadata = { title: 'Risk assessment' };
+export const metadata = { title: 'Risk Assessment' };
 
 export default async function MissionRiskPage({ params }: { params: Promise<{ id: string }> }) {
   const auth = await requirePage('risk.submit');
@@ -26,7 +26,7 @@ export default async function MissionRiskPage({ params }: { params: Promise<{ id
   const latest = m.riskAssessments[0];
   const open = latest?.status === 'SUBMITTED' ? latest : null;
   const header = (
-    <PageHeader back={{ href: `/missions/${m.id}`, label: m.missionNo }} title="Risk assessment" sub={`${m.missionNo} · ${m.aircraft.registration} · take-off ${localTime(m.takeoffAt)} · due by T-30`} />
+    <PageHeader back={{ href: `/missions/${m.id}`, label: m.missionNo }} title="Risk Assessment" sub={`${m.missionNo} · ${m.aircraft.registration} · take-off ${localTime(m.takeoffAt)} · due by T-30`} />
   );
 
   if (open) {

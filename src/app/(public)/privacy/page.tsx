@@ -1,7 +1,7 @@
 import { getBranding } from '@/lib/branding';
 import { privacyContact } from '@/lib/privacy';
 
-export const metadata = { title: 'Privacy policy' };
+export const metadata = { title: 'Privacy Policy' };
 
 const UPDATED = '23 October 2026';
 
@@ -22,7 +22,7 @@ export default async function PrivacyPage() {
     <div className="card overflow-hidden">
       <div className="card-body flex flex-col gap-6">
         <div className="flex flex-col gap-1">
-          <h1>Privacy policy</h1>
+          <h1>Privacy Policy</h1>
           <p className="text-ink-muted">Last updated {UPDATED}</p>
         </div>
 
@@ -30,13 +30,13 @@ export default async function PrivacyPage() {
           {app} is the flight operations app used by {b.unit.name}, {b.unit.location}, to plan and record flying: schedules, aircraft serviceability, mission orders, crew readiness, risk assessments, flight plans and mission reports. It is for authorised unit personnel only. This policy explains what personal data the app holds, why, and what you can do about it. It applies to the website, the installable web app and the Android and iPhone apps.
         </p>
 
-        <Section title="Who is responsible">
+        <Section title="Who Is Responsible">
           <p>
             The app is run for {b.unit.name}. Questions about your data go to <a href={`mailto:${contact}`}>{contact}</a>. Data is handled in line with the Nigeria Data Protection Act 2023.
           </p>
         </Section>
 
-        <Section title="What we hold">
+        <Section title="What We Hold">
           <ul className="list-disc pl-6">
             <li>
               <strong>Your account:</strong> rank, full name, service number, appointment, flight status (captain or co-pilot) and pilot category, email address, phone number, and a photo if you add one.
@@ -57,7 +57,7 @@ export default async function PrivacyPage() {
           <p>The app does not use advertising, does not track you across other apps or websites, and does not collect your location.</p>
         </Section>
 
-        <Section title="Cookies and storage on your device">
+        <Section title="Cookies and Storage on Your Device">
           <p>The app only uses what it needs to work. There are no advertising, analytics or tracking cookies, so there is nothing to opt out of.</p>
           <ul className="list-disc pl-6">
             <li>
@@ -69,13 +69,13 @@ export default async function PrivacyPage() {
           </ul>
         </Section>
 
-        <Section title="Why we use it">
+        <Section title="Why We Use It">
           <p>
             Only to run flying operations safely: to know who is crewed and ready, to route approvals to the right appointment, to keep aircraft hours and inspections correct, to send you alerts about your duties, and to produce summaries for the chain of command. Your data is never sold.
           </p>
         </Section>
 
-        <Section title="Who can see it">
+        <Section title="Who Can See It">
           <ul className="list-disc pl-6">
             <li>People in the unit who need it for their appointment, as set by the app&apos;s access rules. For example, the Safety Officer sees risk assessments; pilots see their own sorties.</li>
             <li>
@@ -85,19 +85,19 @@ export default async function PrivacyPage() {
           </ul>
         </Section>
 
-        <Section title="How it is protected">
+        <Section title="How It Is Protected">
           <p>
             All traffic is encrypted (HTTPS). Accounts are activated by the unit Admin. Commander, GOO and Admin accounts use two-step sign-in. Repeated wrong passwords lock the account for a while, and idle sessions end automatically. Each unit runs its own separate copy, so units cannot see each other&apos;s data.
           </p>
         </Section>
 
-        <Section title="How long it is kept">
+        <Section title="How Long It Is Kept">
           <p>
             Your account details are kept while you hold an account. Flying records, approvals and the activity log are official unit records and are kept for as long as the unit requires. Notifications and session records are cleared regularly.
           </p>
         </Section>
 
-        <Section title="Your choices and rights">
+        <Section title="Your Choices and Rights">
           <ul className="list-disc pl-6">
             <li>See your details on <em>My profile</em>. Change your phone number there; rank, appointment and flight status changes go to Admin for approval.</li>
             <li>Choose which alerts reach you by email, and turn phone notifications on or off.</li>
@@ -114,7 +114,7 @@ export default async function PrivacyPage() {
           <p>The app is only for serving unit personnel and is not meant for anyone under 18.</p>
         </Section>
 
-        <Section title="Changes to this policy">
+        <Section title="Changes to This Policy">
           <p>If this policy changes, the new version is posted here with a new date. See also the <a href="/terms">conditions of use</a>.</p>
         </Section>
       </div>

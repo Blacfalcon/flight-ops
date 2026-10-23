@@ -6,6 +6,7 @@
  */
 import { PrismaClient } from '@prisma/client';
 import { hash } from '@node-rs/argon2';
+import { splitName } from '../src/lib/names';
 
 const db = new PrismaClient();
 
@@ -38,6 +39,7 @@ async function firstAdmin() {
     data: {
       rank: rank as never,
       fullName: process.env.SEED_ADMIN_NAME ?? 'System Administrator',
+      ...splitName(process.env.SEED_ADMIN_NAME ?? 'System Administrator'),
       nafNumber: (process.env.SEED_ADMIN_NAF ?? 'SVC/0000').toUpperCase(),
       email: email.toLowerCase(),
       phone: process.env.SEED_ADMIN_PHONE ?? '+2340000000000',

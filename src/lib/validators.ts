@@ -4,6 +4,7 @@ import { AIRCRAFT_STATUSES, APPOINTMENTS, FLIGHT_STATUSES, MISSION_CATEGORIES, P
 // Request schemas shared by API routes and (where useful) client forms.
 
 const trimmed = (max = 200) => z.string().trim().min(1, 'Required.').max(max);
+const optionalName = z.string().trim().max(60).optional().transform((s) => s || null);
 export const localDateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD.');
 export const localTimeStr = z.string().regex(/^\d{2}:\d{2}$/, 'Use HH:MM.');
 export const uuid = z.string().uuid();
@@ -11,9 +12,11 @@ export const uuid = z.string().uuid();
 export const registerSchema = z
   .object({
     rank: z.enum(RANKS),
-    fullName: trimmed(120),
+    firstName: trimmed(60),
+    middleName: optionalName,
+    surname: trimmed(60),
     nafNumber: trimmed(30).transform((s) => s.toUpperCase()),
-    email: z.string().trim().toLowerCase().email('Enter a valid email.'),
+    email: z.string().trim().toLowerCase().email('Enter a valid email address.'),
     phone: z.string().trim().regex(/^\+?[0-9 ()-]{7,20}$/, 'Enter a valid phone number.'),
     appointment: z.enum(APPOINTMENTS),
     flightStatus: z.enum(FLIGHT_STATUSES),
@@ -35,7 +38,6 @@ export const codeSchema = z.object({ code: z.string().regex(/^\d{6}$/, 'Enter th
 
 export const meUpdateSchema = z.object({
   phone: z.string().trim().regex(/^\+?[0-9 ()-]{7,20}$/).optional(),
-  fullName: trimmed(120).optional(),
   emailAlerts: z.enum(['URGENT', 'ALL', 'NONE']).optional(),
   requestChange: z
     .object({
@@ -48,7 +50,9 @@ export const meUpdateSchema = z.object({
 
 export const userAdminUpdateSchema = z.object({
   rank: z.enum(RANKS).optional(),
-  fullName: trimmed(120).optional(),
+  firstName: trimmed(60).optional(),
+  middleName: optionalName,
+  surname: trimmed(60).optional(),
   nafNumber: trimmed(30).optional(),
   email: z.string().trim().toLowerCase().email().optional(),
   phone: z.string().trim().regex(/^\+?[0-9 ()-]{7,20}$/).optional(),

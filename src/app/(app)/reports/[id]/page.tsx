@@ -53,7 +53,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       </div>
 
       {f.perDay.length > 1 && (
-        <Card title="Flight hours by day">
+        <Card title="Flight Hours by Day">
           <div className="flex h-48 items-end gap-1.5" role="img" aria-label="Flight hours per day">
             {f.perDay.map((d) => (
               <div key={d.date} className="flex flex-1 flex-col items-center justify-end gap-1" title={`${d.date}: ${formatHours(d.hours)}, ${d.missions} missions`}>
@@ -73,7 +73,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       )}
 
       <div className="flex flex-wrap items-start gap-6">
-        <Card className="min-w-0 flex-[1_1_380px]" title="Aircraft utilisation" bodyClass="">
+        <Card className="min-w-0 flex-[1_1_380px]" title="Aircraft Utilisation" bodyClass="">
           {f.aircraft.length === 0 ? (
             <Empty>No flying recorded.</Empty>
           ) : (
@@ -99,7 +99,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
             </table>
           )}
         </Card>
-        <Card className="min-w-0 flex-[1_1_380px]" title="Mission types" bodyClass="">
+        <Card className="min-w-0 flex-[1_1_380px]" title="Mission Types" bodyClass="">
           {f.byType.length === 0 ? (
             <Empty>No missions.</Empty>
           ) : (
@@ -130,7 +130,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       </div>
 
       {f.abortReasons.length > 0 && (
-        <Card title="Abort reasons" bodyClass="">
+        <Card title="Abort Reasons" bodyClass="">
           <table className="table">
             <tbody>
               {f.abortReasons.map((a) => (
@@ -179,12 +179,12 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
       {(f.period === 'MONTHLY' || f.period === 'QUARTERLY') && (
         <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
-          <Card title="Maintenance performance">
+          <Card title="Maintenance Performance">
             <p>
               Snags raised <strong>{f.maintenance.snagsRaised}</strong>, closed <strong>{f.maintenance.snagsClosed}</strong>. Average days to close: <strong>{f.maintenance.avgDaysToClose ?? '—'}</strong>.
             </p>
           </Card>
-          <Card title="Safety performance">
+          <Card title="Safety Performance">
             <p>
               Risk assessments: Low <strong>{f.safety.low}</strong>, Medium <strong>{f.safety.medium}</strong>, High <strong>{f.safety.high}</strong>; rejected <strong>{f.safety.rejected}</strong>. Hazard reports <strong>{f.safety.hazards}</strong>, incident reports{' '}
               <strong>{f.safety.incidents}</strong>. Sorties self-authorised by a crewed approver <strong>{f.safety.selfAuthorised ?? 0}</strong>.

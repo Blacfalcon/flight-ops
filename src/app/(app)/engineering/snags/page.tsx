@@ -39,7 +39,7 @@ export default async function SnagsPage({ searchParams }: { searchParams: Promis
         ))}
       </nav>
       {(auth.perms.has('snag.raise') || canClose) && (
-        <Card title="Raise a snag">
+        <Card title="Raise a Snag">
           <RaiseSnag aircraft={aircraft} />
         </Card>
       )}
