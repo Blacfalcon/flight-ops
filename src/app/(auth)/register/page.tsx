@@ -194,7 +194,7 @@ export default function RegisterPage() {
         <label htmlFor="accept" className="flex items-start gap-3 text-[14px]">
           <input id="accept" name="accept" type="checkbox" required className="mt-0.5 h-5 w-5 shrink-0" aria-describedby={err.accept ? 'accept-error' : undefined} />
           <span>
-            I have read the <a href="/privacy" target="_blank" rel="noopener">privacy policy</a> and <a href="/terms" target="_blank" rel="noopener">conditions of use</a>, and I am 18 or over.
+            I have read the <a href="/privacy" target="_blank" rel="noopener">privacy policy</a> and <a href="/terms" target="_blank" rel="noopener">conditions of use</a>.
           </span>
         </label>
         {err.accept && (

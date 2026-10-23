@@ -32,7 +32,7 @@ export default async function TermsPage() {
 
         <Section title="Who May Use It">
           <ul className="list-disc pl-6">
-            <li>Only serving personnel authorised by the unit, aged 18 or over. Every account is activated by the unit Admin, who may refuse or suspend it.</li>
+            <li>Only serving personnel authorised by the unit. Every account is activated by the unit Admin, who may refuse or suspend it.</li>
             <li>Use your own account only. Do not share your password, two-step sign-in codes or a signed-in device.</li>
             <li>Register with your true rank, name, service details and appointment, and keep them up to date.</li>
           </ul>

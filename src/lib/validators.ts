@@ -23,7 +23,7 @@ export const registerSchema = z
     pilotCategory: z.enum(PILOT_CATEGORIES),
     password: z.string().min(10, 'Use at least 10 characters.').max(200),
     photo: z.string().max(400_000).optional(), // optional data URL, resized in the browser
-    accept: z.literal(true, { errorMap: () => ({ message: 'You must accept the privacy policy and conditions of use, and be 18 or over.' }) }),
+    accept: z.literal(true, { errorMap: () => ({ message: 'You must accept the privacy policy and conditions of use.' }) }),
   })
   .refine((v) => v.flightStatus !== 'NONE' || v.pilotCategory === 'NIL', { path: ['pilotCategory'], message: 'Choose Nil if you are not a pilot.' });
 
